@@ -29,6 +29,8 @@
 
 After CodeRabbit is installed on the repository, it will automatically review pull requests opened against `main`.
 
+For the first smoke test, use a tiny docs-only or config-only branch so you can confirm the review flow before sending bigger production changes through it.
+
 Useful PR comments:
 
 - `@coderabbitai review`
@@ -46,4 +48,3 @@ Useful PR comments:
 - `parichayam-firebase.js`
 
 Changes in these files should be reviewed carefully before merge.
-
