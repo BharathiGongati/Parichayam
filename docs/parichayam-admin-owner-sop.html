@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parichayam Admin and Owner SOP</title>
+<style>
+  :root{--maroon:#7b1c2e;--deep:#4a0e1a;--gold:#c9963a;--cream:#fdf8f0;--ink:#2d2018;--muted:#6f5a4c;--line:#dcc7ab;--soft:#f6ede1;--green:#166534;--red:#b91c1c;--blue:#1d4ed8;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#efe7dc;line-height:1.55}
+  .page{width:210mm;min-height:297mm;margin:0 auto;background:#fff;padding:16mm 14mm 18mm}
+  .cover{min-height:245mm;display:flex;flex-direction:column;justify-content:space-between}
+  .brand{border:2px solid var(--gold);padding:18mm 16mm;background:linear-gradient(135deg,#fff,#fff8ed)}
+  h1,h2,h3{margin:0 0 8px;font-family:Georgia,"Times New Roman",serif;color:var(--deep)}
+  h1{font-size:28px;line-height:1.2}
+  h2{font-size:20px;margin-top:24px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+  h3{font-size:15px;margin-top:16px}
+  p{margin:6px 0 10px}
+  ul,ol{margin:6px 0 10px 20px;padding:0}
+  li{margin:4px 0}
+  .subtitle{color:var(--muted);font-size:13px;margin-top:8px}
+  .meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px}
+  .card,.callout,.warning,.tip,.kpi,.box,.pillar{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--soft)}
+  .warning{background:#fff3f2;border-color:#efc8c2}
+  .tip{background:#eef8f1;border-color:#bed8c3}
+  .callout{background:#fff8eb}
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+  .kpi strong,.box strong,.pillar strong{display:block;color:var(--deep);margin-bottom:4px}
+  .kpi strong{font-size:18px}
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+  .section-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .matrix{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px}
+  .matrix th,.matrix td{border:1px solid var(--line);padding:8px 9px;vertical-align:top}
+  .matrix th{background:#f7efe4;text-align:left;color:var(--deep)}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 14px}
+  .box{flex:1 1 140px;min-width:140px;background:#fff}
+  .arrow{font-size:20px;color:var(--gold);font-weight:bold}
+  .tag{display:inline-block;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;margin-right:6px;margin-bottom:4px}
+  .gold{background:#fff0c9;color:#7a5200}.green{background:#e8f7ec;color:var(--green)}.blue{background:#e8f0ff;color:var(--blue)}
+  .footer-note{margin-top:24px;font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+  @media print{body{background:#fff}.page{margin:0;width:auto;min-height:auto}}
+</style>
+</head>
+<body>
+<div class="page cover">
+  <div class="brand">
+    <div class="tag gold">Business SOP</div>
+    <div class="tag blue">Admin Operations</div>
+    <div class="tag green">Launch Reference</div>
+    <h1>Parichayam Matrimony Platform<br>Admin and Business Owner Standard Operating Procedure</h1>
+    <div class="subtitle">Business and system-flow document for non-technical admin, owner, and operations team.</div>
+  </div>
+  <div class="meta">
+    <div class="card"><strong>Prepared For</strong><br>Business Owner, Super Admin, Senior Operations Team</div>
+    <div class="card"><strong>Prepared From</strong><br>Active Firebase-ready Parichayam build in the live workspace</div>
+    <div class="card"><strong>Scope</strong><br>Public website, auth, member dashboard, admin panel, matchmaker, and agent operations</div>
+    <div class="card"><strong>Use Case</strong><br>Training, launch governance, business operations, and admin handover</div>
+  </div>
+  <div class="callout">
+    <strong>Purpose of this SOP</strong>
+    <p>This document explains how Parichayam works in business language so that a non-technical admin can run the platform, understand match generation, and know which admin controls affect live user behavior.</p>
+  </div>
+</div>
+
+<div class="page">
+  <h2>1. System Overview</h2>
+  <p>Parichayam is a matrimony platform designed around Arya Vyshya matchmaking. It operates through four layers: public website, member dashboard, admin panel, and internal operations channels such as matchmaker and agent workflows.</p>
+  <div class="pillars">
+    <div class="pillar"><strong>Public Layer</strong>Index page, trust-building, registration entry, and conversion.</div>
+    <div class="pillar"><strong>Member Layer</strong>Signup, trial or paid plan, profile completion, matching, interests, shortlist, messages.</div>
+    <div class="pillar"><strong>Operations Layer</strong>Admin controls, pricing, verification, agents, reports, staff, and content governance.</div>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi"><strong>Member Data</strong>Stored in Firestore with profile, plan, verification, and ranking attributes.</div>
+    <div class="kpi"><strong>Identity</strong>Handled through Firebase Authentication with email/password and OTP support.</div>
+    <div class="kpi"><strong>Payments</strong>Handled through backend-controlled payment order and verification flow.</div>
+    <div class="kpi"><strong>Matches</strong>Generated by backend ranking and shown inside dashboard views.</div>
+  </div>
+  <h3>Business Model Summary</h3>
+  <ul>
+    <li>Users register and begin on a free trial or move directly into a paid plan.</li>
+    <li>The platform encourages complete profiles, verification, and photos to improve trust and response quality.</li>
+    <li>Revenue comes from plans, add-ons, boost, connect packs, verification-related value, and agent channels.</li>
+    <li>Admin controls visibility, pricing, verification workflow, dashboard sections, and selected matchmaking behavior.</li>
+  </ul>
+
+  <h2>2. End-to-End System Flow</h2>
+  <div class="flow">
+    <div class="box"><strong>1. Landing</strong>User enters the index page and sees brand story, trust points, and CTA buttons.</div>
+    <div class="arrow">→</div>
+    <div class="box"><strong>2. Register / Sign In</strong>User goes to auth page and signs in or creates an account.</div>
+    <div class="arrow">→</div>
+    <div class="box"><strong>3. Membership Start</strong>User begins trial or selects a paid plan and proceeds to checkout.</div>
+    <div class="arrow">→</div>
+    <div class="box"><strong>4. Profile Build</strong>User fills personal, family, career, jathakam, and photos.</div>
+    <div class="arrow">→</div>
+    <div class="box"><strong>5. Matching</strong>Backend filters and ranks live opposite-gender candidates.</div>
+    <div class="arrow">→</div>
+    <div class="box"><strong>6. Engagement</strong>User sends interests, shortlists, upgrades, and may use matchmaker support.</div>
+  </div>
+  <table class="matrix">
+    <thead><tr><th>Stage</th><th>Business Meaning</th><th>Admin Responsibility</th></tr></thead>
+    <tbody>
+      <tr><td>Visitor Entry</td><td>First conversion point</td><td>Keep website copy, contacts, and CTA flow current</td></tr>
+      <tr><td>Registration</td><td>Lead becomes a system account</td><td>Keep auth mode, OTP, and plan flow working</td></tr>
+      <tr><td>Profile Completion</td><td>Profile quality drives match quality</td><td>Keep critical fields visible and encouraged</td></tr>
+      <tr><td>Verification</td><td>Trust-building for serious users</td><td>Review Aadhaar and income proofs quickly</td></tr>
+      <tr><td>Matching</td><td>Platform generates ranked candidate suggestions</td><td>Maintain clean communities, gotras, and ranking-related settings</td></tr>
+      <tr><td>Upgrade and Conversion</td><td>Trial or free users move to paid value</td><td>Monitor plans, add-ons, payment flow, and trial expiry</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3. Page-Wise SOP</h2>
+  <h3>3.1 Index Page</h3>
+  <p><strong>Business purpose:</strong> top-of-funnel page that sells trust, community focus, and the reason to register.</p>
+  <ul>
+    <li>Main actions: sign up, sign in, learn about the service, open agent enquiry, and access admin login.</li>
+    <li>Operational note: support contact details, trust claims, and CTA buttons must always be current.</li>
+  </ul>
+
+  <h3>3.2 Auth Page</h3>
+  <p><strong>Business purpose:</strong> login, signup, password reset, and plan selection.</p>
+  <ul>
+    <li>Registration is two-step: account basics first, plan/trial next.</li>
+    <li>Mobile OTP can be required before signup continues.</li>
+    <li>If a paid plan is selected, account creation happens first and checkout follows.</li>
+    <li>If no paid plan is selected, the account begins on a trial plan.</li>
+  </ul>
+
+  <h3>3.3 Dashboard Page</h3>
+  <p><strong>Business purpose:</strong> the main member workspace where discovery, engagement, and monetization happen.</p>
+  <ul>
+    <li>Main sections include Home, Today’s Matches, Search Partners, Shortlist, Interests, Messages, Notifications, Profile, Kundali Match, Psychology Profile, Matchmaker, Services, and Settings.</li>
+    <li>Home shows membership state, highlighted suggestions, and engagement widgets.</li>
+    <li>Today’s Matches is the main ranked match feed.</li>
+    <li>Search Partners is the manual exploration area.</li>
+  </ul>
+
+  <h3>3.4 Profile Section Inside Dashboard</h3>
+  <p><strong>Business purpose:</strong> profile quality directly affects ranking, trust, and response rate.</p>
+  <table class="matrix">
+    <thead><tr><th>Profile Area</th><th>Why It Matters</th><th>Business Impact</th></tr></thead>
+    <tbody>
+      <tr><td>Basic Info</td><td>Age, city, community, about section</td><td>Directly affects match ranking and trust</td></tr>
+      <tr><td>Jathakam</td><td>Nakshatra, rashi, padam, dosham</td><td>Improves kundali-based matching</td></tr>
+      <tr><td>Education and Career</td><td>Qualification, profession, income</td><td>Improves ranking and serious-family decision-making</td></tr>
+      <tr><td>Family Details</td><td>Parents, siblings, background</td><td>Raises seriousness and acceptance rate</td></tr>
+      <tr><td>Photos</td><td>Display photo and photo set</td><td>Improves conversion and trust</td></tr>
+      <tr><td>Verification</td><td>Aadhaar and income proof</td><td>Raises trust score and response quality</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.5 Matches Section Inside Dashboard</h3>
+  <ul>
+    <li>Matches are ranked by live backend logic, not just display order on the page.</li>
+    <li>Only opposite-gender, active, visible, and matchable profiles should appear.</li>
+    <li>Same-gotra can be blocked if hard policy is enabled.</li>
+    <li>Verification, completeness, and recent activity improve order.</li>
+    <li>Paid or boosted profiles can receive a limited visibility bonus.</li>
+  </ul>
+
+  <h3>3.6 Admin Panel</h3>
+  <div class="section-grid">
+    <div class="callout">
+      <strong>Main Admin Control Areas</strong>
+      <ul>
+        <li>Profiles and bulk upload</li>
+        <li>Pricing and membership plans</li>
+        <li>Add-ons and connect packs</li>
+        <li>Dashboard Builder</li>
+        <li>Profile Form Builder</li>
+        <li>Gotra and community management</li>
+        <li>Verification Queue</li>
+        <li>User Access Control</li>
+        <li>Agents and Franchise</li>
+        <li>Staff access and reports</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <strong>Most Sensitive Settings</strong>
+      <ul>
+        <li>Auth mode and OTP setup</li>
+        <li>Payment settings</li>
+        <li>Kundali enablement and weight</li>
+        <li>Same-gotra policy</li>
+        <li>Dashboard visibility</li>
+        <li>Required profile fields</li>
+        <li>P-number shared-profile fields</li>
+        <li>Agent commission and payout flows</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>4. Matchmaking Logic in Business Language</h2>
+  <p>The current live backend follows a rule-and-score model. It removes invalid profiles first, then ranks the remaining candidates. This is safer and more realistic than random listing for a growing but still limited database.</p>
+
+  <h3>4.1 Basic Match Rules</h3>
+  <ol>
+    <li>Only opposite-gender profiles are considered.</li>
+    <li>Hidden, blocked, suspended, deleted, or non-member accounts are excluded.</li>
+    <li>The member cannot match with their own profile.</li>
+    <li>If same-gotra policy is hard, same-gotra matches are fully blocked.</li>
+    <li>The remaining candidates are scored and sorted.</li>
+  </ol>
+
+  <h3>4.2 Current Score Drivers</h3>
+  <table class="matrix">
+    <thead><tr><th>Factor</th><th>What It Means in Business Terms</th></tr></thead>
+    <tbody>
+      <tr><td>Age Fit</td><td>Profiles rank higher when the age pattern fits expected marriage norms.</td></tr>
+      <tr><td>Community Fit</td><td>Same or closely aligned community ranks higher.</td></tr>
+      <tr><td>Location Fit</td><td>Same city or state ranks above long-distance options.</td></tr>
+      <tr><td>Education Fit</td><td>Similar education level ranks better.</td></tr>
+      <tr><td>Income Fit</td><td>Income alignment helps ranking but is not always a strict reject rule.</td></tr>
+      <tr><td>Profile Completeness</td><td>Filled profiles rank better than incomplete profiles.</td></tr>
+      <tr><td>Activity</td><td>Recently active profiles rank better.</td></tr>
+      <tr><td>Trust Score</td><td>Phone, Aadhaar, and income verification improve ranking.</td></tr>
+      <tr><td>Kundali</td><td>If allowed, jathakam compatibility becomes an additional ranking layer.</td></tr>
+      <tr><td>Boost and Paid Bonus</td><td>Boost and paid status add visibility bonus, but with a cap.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.3 Age Gap Logic Explained</h3>
+  <p>The live backend uses a directional groom-older-by model. The strongest score is when the groom is around 2 to 5 years older than the bride.</p>
+  <ul>
+    <li>Best bracket: groom older by 2 to 5 years</li>
+    <li>Good bracket: groom older by 0 to 7 years</li>
+    <li>Wider or reverse difference may still appear, but with lower ranking</li>
+  </ul>
+  <div class="section-grid">
+    <div class="tip"><strong>Example A</strong><p>Boy age 30, girl age 26. Groom is older by 4 years, so this receives a top age-fit score.</p></div>
+    <div class="tip"><strong>Example B</strong><p>Girl age 27, boy age 30. Groom is older by 3 years, so this also receives a top age-fit score.</p></div>
+  </div>
+
+  <h3>4.4 Education, Salary, Business Income, and Location</h3>
+  <ul>
+    <li><strong>Education:</strong> Broadly similar education backgrounds rank higher.</li>
+    <li><strong>Salary / business income:</strong> Better alignment improves order, but missing income usually lowers ranking instead of removing the profile.</li>
+    <li><strong>Location:</strong> Same city is best, same state is next, same country is acceptable, long-distance is lower ranked.</li>
+    <li><strong>Community:</strong> Exact community match gets the strongest score.</li>
+  </ul>
+
+  <h3>4.5 User Preferences vs Admin Rules</h3>
+  <div class="warning">
+    <strong>Current Business Truth</strong>
+    <p>In the current live build, the system is stronger on actual profile facts and admin-controlled policy settings than on deep saved partner-preference enforcement. Partner-preference sections exist and are useful, but the live backend ranking today is mainly driven by profile data, trust, completeness, location, community, and kundali settings.</p>
+  </div>
+
+  <h2>5. Admin Control Guide</h2>
+  <h3>5.1 How to Configure Matchmaking-Related Behavior</h3>
+  <ol>
+    <li>Review <strong>Community Manager</strong> and keep only correct community labels.</li>
+    <li>Review <strong>Gotra Manager</strong> and keep gotra spelling clean and standardized.</li>
+    <li>Open kundali settings and confirm:
+      <ul>
+        <li>kundali enabled or disabled</li>
+        <li>same-gotra policy</li>
+        <li>who can access kundali: free, trial, paid</li>
+        <li>kundali weight in ranking</li>
+      </ul>
+    </li>
+    <li>Use <strong>Dashboard Builder</strong> to decide which matching-related sections members can see.</li>
+    <li>Use <strong>Profile Form Builder</strong> to keep critical data fields visible and, where needed, required.</li>
+    <li>Use <strong>User Access Control</strong> to activate add-ons like gotra block or boost for specific users.</li>
+  </ol>
+
+  <h3>5.2 How Admin Reviews and Approves Users</h3>
+  <ol>
+    <li>New user completes registration and receives a member account.</li>
+    <li>Admin reviews profile quality, photo quality, and completeness.</li>
+    <li>Admin checks verification documents from the Verification Queue.</li>
+    <li>Admin approves or rejects Aadhaar and income verification.</li>
+    <li>Hidden, blocked, or suspended users should not remain visible in discovery.</li>
+  </ol>
+
+  <h3>5.3 What Happens When Admin Changes Rules</h3>
+  <table class="matrix">
+    <thead><tr><th>Admin Change</th><th>Live Business Effect</th></tr></thead>
+    <tbody>
+      <tr><td>Auth settings</td><td>Changes signup and login behavior for new sessions.</td></tr>
+      <tr><td>Payment settings</td><td>Affects new orders, payment processing, and plan activation.</td></tr>
+      <tr><td>Kundali settings</td><td>Affects ranking, same-gotra handling, and score display.</td></tr>
+      <tr><td>Dashboard Builder</td><td>Changes what members can access in the dashboard, usually on next load.</td></tr>
+      <tr><td>Form Builder</td><td>Changes which profile fields members can fill and which are mandatory.</td></tr>
+      <tr><td>P-number field settings</td><td>Changes what another signed-in user can see when searching a shared P-number.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.4 Admin Do's and Don'ts</h3>
+  <div class="section-grid">
+    <div class="tip">
+      <strong>Do</strong>
+      <ul>
+        <li>Keep city, community, gotra, education, and income data clean.</li>
+        <li>Push members to complete profile and upload clear photos.</li>
+        <li>Review verification queue every day.</li>
+        <li>Use boost as a limited visibility advantage, not as fake relevance.</li>
+        <li>Recheck important admin changes from a fresh session.</li>
+      </ul>
+    </div>
+    <div class="warning">
+      <strong>Do Not</strong>
+      <ul>
+        <li>Hide too many critical fields just to simplify onboarding.</li>
+        <li>Enable hard same-gotra blocking without clean gotra data.</li>
+        <li>Approve weak or fake profiles to inflate counts.</li>
+        <li>Promise families that every partner preference is fully enforced by the current system.</li>
+        <li>Change auth or payment settings without testing the user journey afterward.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>6. Risks and Edge Cases</h2>
+  <table class="matrix">
+    <thead><tr><th>Risk</th><th>What Happens</th><th>Admin Response</th></tr></thead>
+    <tbody>
+      <tr><td>Incomplete profile</td><td>Matches become weaker and response rate drops.</td><td>Push completion campaign and keep important fields visible.</td></tr>
+      <tr><td>Missing jathakam data</td><td>Kundali-based ranking weakens or becomes unavailable.</td><td>Encourage users to complete jathakam fields if they want serious traditional filtering.</td></tr>
+      <tr><td>Wrong OTP or auth settings</td><td>New signups or sign-ins can fail.</td><td>Always test login and signup after changing auth settings.</td></tr>
+      <tr><td>Wrong payment settings</td><td>Checkout or activation can fail.</td><td>Run one payment test after payment setting changes.</td></tr>
+      <tr><td>Hard same-gotra with bad data</td><td>Too many valid profiles get blocked.</td><td>Clean gotra values before using hard blocking widely.</td></tr>
+      <tr><td>Verification backlog</td><td>Trust stays weak and serious families lose confidence.</td><td>Maintain same-day or next-day verification review discipline.</td></tr>
+      <tr><td>Over-filtering in a limited database</td><td>Members feel there are no matches.</td><td>Keep only a few hard filters and let scoring handle the rest.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>7. Daily Operations SOP</h2>
+  <h3>Start of Day Checklist</h3>
+  <ul>
+    <li>Check new registrations and identify incomplete or suspicious profiles.</li>
+    <li>Check the verification queue and clear pending Aadhaar or income items.</li>
+    <li>Check trial-expiry watchlist and identify users nearing conversion deadline.</li>
+    <li>Check payment success, failed activations, and pending plan issues.</li>
+    <li>Check agent applications and payout requests.</li>
+  </ul>
+
+  <h3>Midday Operational Review</h3>
+  <ul>
+    <li>Spot-check 2 to 3 member dashboards and verify match quality.</li>
+    <li>Review whether city, community, and gotra values remain clean and consistent.</li>
+    <li>Review new uploaded photos and document quality if staff workflow requires it.</li>
+    <li>Check support issues from WhatsApp, phone, and email.</li>
+  </ul>
+
+  <h3>End of Day Review</h3>
+  <ul>
+    <li>Check revenue summary: memberships, add-ons, connect packs, boosts, verification value, and agent-related costs.</li>
+    <li>Check whether any major admin settings were changed and confirm the live effect.</li>
+    <li>Check staff, matchmaker, and verification workload balance.</li>
+    <li>Check whether any member complaints indicate bad match quality or trust problems.</li>
+  </ul>
+
+  <h3>Weekly Business Review</h3>
+  <ul>
+    <li>Trial-to-paid conversion rate</li>
+    <li>City-wise registration and paid conversion</li>
+    <li>Verification completion percentage</li>
+    <li>Boost sales versus actual engagement quality</li>
+    <li>Agent performance and payout accuracy</li>
+    <li>Member complaint trends and hidden-profile trends</li>
+  </ul>
+
+  <h2>8. Final Recommendations</h2>
+  <ol>
+    <li>Keep the live backend match engine as the operational truth: eligibility first, score second, boost last.</li>
+    <li>Upgrade saved partner preferences into stronger backend ranking signals in the next product phase.</li>
+    <li>Expose age-gap bands as formal admin-controlled settings if the business wants more control.</li>
+    <li>Maintain strict profile quality and verification discipline; this improves both trust and renewals.</li>
+    <li>Use paid boost carefully: it should improve visibility, not destroy relevance.</li>
+    <li>Before public scale-up, perform a final business QA sweep on signup, OTP, payment, profile save, verification, and Today’s Matches.</li>
+  </ol>
+
+  <div class="footer-note">This SOP reflects the current active Parichayam Firebase-ready build in the live working project. It is an operating document for admin and business leadership, not a line-by-line code manual.</div>
+</div>
+</body>
+</html>

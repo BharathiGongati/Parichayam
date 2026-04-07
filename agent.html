@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Parichayam Agent Dashboard — track leads, manage pipeline, earn commissions.">
+<meta name="robots" content="noindex,nofollow">
+<title>Agent Dashboard — Parichayam</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --m:#7B1C2E;--d:#4A0E1A;--d2:#2A0810;
+  --g:#C9963A;--gl:#E8C06A;
+  --cr:#FDF6EC;--w:#F5EAD8;--tx:#2C1A10;--mu:#8A6A58;--wh:#FFFDF9;
+  --gn:#166534;--rd:#dc2626;--bl:#2563eb;
+  --shadow:0 2px 12px rgba(44,26,16,.08);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cr);color:var(--tx);min-height:100vh;}
+
+/* ── NAV ── */
+.nav{background:var(--d2);padding:.7rem 1.4rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.nav-brand{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--gl);line-height:1;}
+.nav-sub{font-size:.48rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.3);display:block;margin-top:.1rem;}
+.nav-right{display:flex;gap:.7rem;align-items:center;}
+.nav-name{font-size:.74rem;color:rgba(255,255,255,.6);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-nav{padding:.38rem .85rem;background:rgba(201,150,58,.2);color:var(--gl);border:1px solid rgba(201,150,58,.3);border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.btn-nav:hover{background:rgba(201,150,58,.32);}
+
+/* ── BOTTOM TABS ── */
+.btabs{position:fixed;bottom:0;left:0;right:0;background:var(--wh);border-top:1.5px solid rgba(201,150,58,.18);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0);}
+.btab{flex:1;padding:.55rem 0 .42rem;text-align:center;font-size:.6rem;font-weight:500;color:var(--mu);cursor:pointer;transition:color .2s;border:none;background:none;font-family:'DM Sans',sans-serif;position:relative;}
+.btab.active{color:var(--m);font-weight:700;}
+.btab-icon{font-size:1.1rem;display:block;margin-bottom:.1rem;}
+.btab-badge{position:absolute;top:4px;left:calc(50% + 6px);background:var(--rd);color:#fff;font-size:.48rem;min-width:14px;height:14px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 3px;font-weight:700;}
+
+/* ── LAYOUT ── */
+.page{max-width:960px;margin:0 auto;padding:1rem 1rem 5.5rem;}
+.tab-content{display:none;}
+.tab-content.active{display:block;animation:fadeUp .2s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── CARDS ── */
+.card{background:var(--wh);border-radius:12px;border:1px solid rgba(201,150,58,.18);padding:1rem 1.1rem;margin-bottom:.85rem;box-shadow:var(--shadow);}
+.card-title{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--d);margin-bottom:.75rem;padding-bottom:.45rem;border-bottom:1px solid rgba(201,150,58,.1);display:flex;align-items:center;gap:.4rem;}
+
+/* ── KPI STRIP ── */
+.kpi-strip{display:flex;gap:.6rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:.85rem;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.kpi-strip::-webkit-scrollbar{display:none;}
+.kpi{background:var(--wh);border-radius:10px;padding:.72rem .9rem;border:1px solid rgba(201,150,58,.18);min-width:128px;flex-shrink:0;box-shadow:var(--shadow);}
+.kpi-val{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--m);line-height:1;}
+.kpi-lbl{font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-top:.18rem;}
+.kpi-sub{font-size:.58rem;color:var(--gn);margin-top:.1rem;font-weight:500;}
+
+/* ── PIPELINE BAR ── */
+.pipeline{display:flex;gap:2px;border-radius:8px;overflow:hidden;margin-bottom:.85rem;height:44px;}
+.pipe-seg{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:opacity .2s;min-width:0;}
+.pipe-seg:hover{opacity:.82;}
+.pipe-n{font-weight:700;font-size:.78rem;line-height:1;}
+.pipe-lbl{font-size:.48rem;letter-spacing:.04em;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:clip;}
+
+/* ── LEAD CARD ── */
+.lcard{background:var(--wh);border-radius:10px;border:1px solid rgba(201,150,58,.15);padding:.82rem .9rem;margin-bottom:.55rem;transition:box-shadow .18s,border-color .18s;}
+.lcard:hover{box-shadow:0 3px 12px rgba(0,0,0,.07);border-color:rgba(201,150,58,.28);}
+.lcard.converted{border-left:3px solid var(--gn);}
+.lcard.overdue-card{border-left:3px solid var(--rd);}
+.lc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;}
+.lc-name{font-weight:600;font-size:.86rem;line-height:1.2;}
+.lc-det{font-size:.65rem;color:var(--mu);margin-top:.22rem;line-height:1.5;}
+.lc-note{font-size:.67rem;color:var(--mu);margin-top:.3rem;font-style:italic;border-left:2px solid var(--g);padding-left:.5rem;line-height:1.4;}
+.lc-fu{font-size:.67rem;margin-top:.28rem;padding:.28rem .5rem;border-radius:6px;display:inline-block;}
+.lc-fu.overdue{background:rgba(220,38,38,.08);color:var(--rd);}
+.lc-fu.due-today{background:rgba(201,150,58,.12);color:#92400e;}
+.lc-fu.upcoming{background:rgba(22,101,52,.07);color:var(--gn);}
+.lc-actions{display:flex;gap:.32rem;flex-wrap:wrap;margin-top:.48rem;}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;font-size:.57rem;font-weight:600;padding:.17rem .48rem;border-radius:7px;white-space:nowrap;letter-spacing:.03em;}
+.bg-gn{background:rgba(22,101,52,.1);color:var(--gn);border:1px solid rgba(22,101,52,.18);}
+.bg-rd{background:rgba(220,38,38,.1);color:var(--rd);border:1px solid rgba(220,38,38,.18);}
+.bg-gd{background:rgba(201,150,58,.12);color:#92400e;border:1px solid rgba(201,150,58,.22);}
+.bg-bl{background:rgba(37,99,235,.1);color:var(--bl);border:1px solid rgba(37,99,235,.18);}
+.bg-mu{background:rgba(138,106,88,.08);color:var(--mu);border:1px solid rgba(138,106,88,.18);}
+.act-btn{cursor:pointer;text-decoration:none;padding:.28rem .58rem;font-size:.63rem;font-weight:500;border:none;font-family:'DM Sans',sans-serif;border-radius:7px;transition:opacity .18s;}
+.act-btn:hover{opacity:.8;}
+.act-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── FORMS ── */
+.f{display:flex;flex-direction:column;gap:.18rem;margin-bottom:.7rem;}
+.f label{font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);}
+.f input,.f select,.f textarea{padding:.58rem .8rem;background:var(--cr);border:1.5px solid rgba(201,150,58,.2);border-radius:9px;font-size:.82rem;font-family:'DM Sans',sans-serif;color:var(--tx);outline:none;transition:border-color .2s;}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--g);background:var(--wh);}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
+
+/* ── BUTTONS ── */
+.btn-primary{padding:.62rem 1.35rem;background:linear-gradient(135deg,var(--d),var(--m));color:white;border:none;border-radius:10px;font-size:.83rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .15s,box-shadow .15s;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(123,28,46,.25);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-sec{padding:.52rem .95rem;background:transparent;color:var(--m);border:1.5px solid rgba(123,28,46,.25);border-radius:9px;font-size:.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .18s;}
+.btn-sec:hover{background:rgba(123,28,46,.05);}
+.btn-copy{padding:.38rem .75rem;background:rgba(201,150,58,.1);color:#92400e;border:1px solid rgba(201,150,58,.22);border-radius:7px;font-size:.68rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .18s;}
+.btn-copy:hover{background:rgba(201,150,58,.2);}
+
+/* ── LOGIN ── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:linear-gradient(155deg,var(--d2) 0%,var(--d) 50%,var(--m) 100%);}
+.login-box{background:var(--wh);border-radius:18px;padding:2rem 1.8rem;width:100%;max-width:430px;box-shadow:0 24px 64px rgba(0,0,0,.35);}
+.login-logo{text-align:center;margin-bottom:1.3rem;}
+.login-logo-icon{font-size:2.2rem;margin-bottom:.4rem;}
+.login-logo-name{font-family:'Playfair Display',serif;font-size:1.75rem;color:var(--m);}
+.login-logo-sub{font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mu);margin-top:.1rem;}
+.login-tabs{display:flex;background:rgba(123,28,46,.07);border-radius:10px;padding:.22rem;margin-bottom:1.2rem;gap:.18rem;}
+.login-tabs button{flex:1;padding:.48rem;border:none;border-radius:8px;font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;background:transparent;color:var(--mu);font-family:'DM Sans',sans-serif;}
+.login-tabs button.active{background:var(--m);color:white;font-weight:600;box-shadow:0 2px 8px rgba(123,28,46,.3);}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(44,26,16,.55);z-index:200;display:none;align-items:flex-end;justify-content:center;padding:0;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--wh);border-radius:18px 18px 0 0;padding:1.5rem 1.4rem 2rem;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:slideUp .22s ease;}
+@keyframes slideUp{from{transform:translateY(30px);}to{transform:translateY(0);}}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--d);margin-bottom:1rem;}
+.modal-drag{width:36px;height:4px;background:rgba(44,26,16,.15);border-radius:2px;margin:0 auto .9rem;}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;bottom:5rem;right:1rem;z-index:999;display:flex;flex-direction:column;gap:.4rem;pointer-events:none;}
+.toast{padding:.65rem 1rem;border-radius:10px;font-size:.76rem;opacity:0;transform:translateY(8px);transition:all .28s;box-shadow:0 4px 16px rgba(0,0,0,.18);pointer-events:auto;max-width:280px;line-height:1.4;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{background:var(--gn);color:#d1fae5;}
+.toast.error{background:#7f1d1d;color:#fecaca;}
+.toast.info{background:var(--d2);color:rgba(255,255,255,.88);}
+.toast.warning{background:#92400e;color:#fef3c7;}
+
+/* ── MISC ── */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(123,28,46,.15);border-top-color:var(--m);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-full{text-align:center;padding:2rem;color:var(--mu);font-size:.8rem;}
+.empty-state{text-align:center;padding:2rem 1rem;color:var(--mu);font-size:.8rem;border:1.5px dashed rgba(201,150,58,.2);border-radius:10px;}
+.act-item{display:flex;align-items:flex-start;gap:.6rem;padding:.45rem 0;border-bottom:1px solid rgba(201,150,58,.07);}
+.act-item:last-child{border-bottom:none;}
+.act-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.act-text{font-size:.74rem;color:var(--tx);line-height:1.5;}
+.act-time{font-size:.6rem;color:var(--mu);}
+.status-banner{padding:.72rem 1rem;border-radius:10px;font-size:.78rem;margin:.4rem 0 0;font-weight:500;line-height:1.5;}
+.status-banner.suspended{background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.18);color:var(--rd);}
+.status-banner.inactive{background:rgba(201,150,58,.1);border:1px solid rgba(201,150,58,.22);color:#92400e;}
+.divider{height:1px;background:rgba(201,150,58,.1);margin:.6rem 0;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:.42rem 0;border-bottom:1px solid rgba(201,150,58,.07);font-size:.78rem;}
+.info-row:last-child{border-bottom:none;}
+.info-lbl{color:var(--mu);}
+.info-val{font-weight:500;color:var(--tx);}
+.goal-bar-wrap{background:rgba(201,150,58,.1);border-radius:6px;overflow:hidden;height:6px;margin-top:.35rem;}
+.goal-bar{height:100%;background:linear-gradient(90deg,var(--g),var(--m));border-radius:6px;transition:width .6s;}
+
+/* ── REFERRAL CARD ── */
+.ref-card{background:linear-gradient(135deg,var(--d2),var(--d));border-radius:12px;padding:1.1rem;color:white;margin-bottom:.75rem;}
+.ref-code{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gl);letter-spacing:.08em;margin:.3rem 0;}
+.ref-link-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:.5rem .7rem;font-size:.68rem;color:rgba(255,255,255,.7);word-break:break-all;margin-bottom:.65rem;cursor:pointer;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .nav{padding:.6rem .85rem;}
+  .page{padding:.75rem .7rem 5.5rem;}
+  .f2{grid-template-columns:1fr;}
+  .kpi{min-width:112px;}
+  .login-box{padding:1.5rem 1.1rem;}
+  .modal{border-radius:16px 16px 0 0;}
+  .card{padding:.85rem .9rem;}
+}
+@media(max-width:380px){
+  .kpi{min-width:100px;}
+  .kpi-val{font-size:1.2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN PANEL ══ -->
+<div id="login-panel" class="login-wrap">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">🤝</div>
+      <div class="login-logo-name">Parichayam</div>
+      <div class="login-logo-sub">Agent Portal</div>
+    </div>
+
+    <div class="login-tabs">
+      <button class="active" onclick="switchLoginTab('signin')">Sign In</button>
+      <button onclick="switchLoginTab('apply')">Apply to Join</button>
+    </div>
+
+    <!-- SIGN IN -->
+    <div id="ltab-signin">
+      <div class="f">
+        <label>Login Email</label>
+        <input id="login-email" type="email" placeholder="Your agent login email" autocomplete="email">
+      </div>
+      <div class="f">
+        <label>Password</label>
+        <input id="login-pass" type="password" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div id="login-err" style="display:none;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);border-radius:8px;padding:.5rem .75rem;font-size:.7rem;color:#dc2626;margin-bottom:.65rem;line-height:1.5;"></div>
+      <button class="btn-primary" style="width:100%;margin-bottom:.55rem" onclick="doLogin()" id="login-btn">Sign In →</button>
+      <div style="text-align:center;font-size:.68rem;color:var(--mu)">
+        No login yet? <a href="#" onclick="switchLoginTab('apply');return false" style="color:var(--m);font-weight:600">Apply to become an agent →</a>
+      </div>
+    </div>
+
+    <!-- APPLY FORM -->
+    <div id="ltab-apply" style="display:none">
+      <div style="background:rgba(201,150,58,.08);border:1px solid rgba(201,150,58,.18);border-radius:9px;padding:.6rem .85rem;font-size:.7rem;color:#854F0B;margin-bottom:.9rem;line-height:1.6">
+        Earn <strong>₹200 – ₹600 per paid referral</strong>. Monthly UPI payout. No upfront fees. Admin reviews within 2–3 days.
+      </div>
+      <div class="f"><label>Full Name *</label><input id="apply-name" placeholder="Your full name" autocomplete="name"></div>
+      <div class="f2">
+        <div class="f"><label>Mobile (WhatsApp) *</label><input id="apply-mobile" type="tel" maxlength="10" placeholder="10 digits" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+        <div class="f"><label>City *</label><input id="apply-city" placeholder="Your city"></div>
+      </div>
+      <div class="f2">
+        <div class="f"><label>State</label>
+          <select id="apply-state">
+            <option value="">Select State</option>
+            <option>Andhra Pradesh</option><option>Telangana</option>
+            <option>Karnataka</option><option>Tamil Nadu</option><option>Other</option>
+          </select>
+        </div>
+        <div class="f"><label>Your Network</label>
+          <select id="apply-network">
+            <option>Below 50 families</option><option>50–200 families</option>
+            <option>200–500 families</option><option>500+ families</option>
+          </select>
+        </div>
+      </div>
+      <div class="f"><label>Experience (optional)</label>
+        <textarea id="apply-exp" rows="2" placeholder="e.g. Matchmaker 10 years, Vyshya Sabha member..." style="resize:none"></textarea>
+      </div>
+      <div id="apply-err" style="display:none;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);border-radius:8px;padding:.5rem .75rem;font-size:.7rem;color:#dc2626;margin-bottom:.65rem;"></div>
+      <button class="btn-primary" style="width:100%;background:linear-gradient(135deg,#92400e,#C9963A)" onclick="doApply()" id="apply-btn">Submit Application →</button>
+      <div style="text-align:center;margin-top:.55rem;font-size:.68rem;color:var(--mu)">
+        Already approved? <a href="#" onclick="switchLoginTab('signin');return false" style="color:var(--m);font-weight:600">Sign In →</a>
+      </div>
+    </div>
+
+    <!-- APPLY SUCCESS -->
+    <div id="ltab-success" style="display:none;text-align:center;padding:1.2rem 0">
+      <div style="font-size:2.5rem;margin-bottom:.5rem">🙏</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--d);margin-bottom:.35rem">Application Submitted!</div>
+      <div style="font-size:.74rem;color:var(--mu);line-height:1.65;margin-bottom:1rem">
+        We will review your application and contact you on WhatsApp within 2–3 business days.
+      </div>
+      <a href="index.html" style="font-size:.76rem;color:var(--m);font-weight:500">← Back to Parichayam</a>
+    </div>
+
+    <div style="text-align:center;margin-top:.75rem;font-size:.66rem">
+      <a href="index.html" style="color:var(--mu)">← Back to main website</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="dashboard" style="display:none">
+  <nav class="nav">
+    <div>
+      <div class="nav-brand">Parichayam</div>
+      <span class="nav-sub">Agent Dashboard</span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-name" id="nav-name">Agent</span>
+      <button class="btn-nav" onclick="doLogout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <div id="status-banner-area" style="padding:0 1rem"></div>
+
+  <div class="page">
+
+    <!-- ── OVERVIEW TAB ── -->
+    <div id="tab-overview" class="tab-content active">
+      <div class="kpi-strip" id="kpi-strip">
+        <div class="kpi"><div class="spinner"></div></div>
+      </div>
+      <div id="pipeline-bar"></div>
+
+      <div class="card">
+        <div class="card-title">📋 Today's Follow-Ups <span id="followup-count-badge" style="display:none;background:var(--rd);color:#fff;font-size:.52rem;font-weight:700;padding:.12rem .45rem;border-radius:8px;margin-left:.3rem"></span></div>
+        <div id="followup-list"><div class="loading-full"><span class="spinner"></span> Loading…</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⏱ Recent Activity</div>
+        <div id="activity-list"><div class="loading-full"><span class="spinner"></span> Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- ── LEADS TAB ── -->
+    <div id="tab-leads" class="tab-content">
+      <div style="display:flex;gap:.45rem;margin-bottom:.75rem;flex-wrap:wrap;align-items:center">
+        <input id="lead-search" placeholder="Search name or mobile…"
+          style="flex:1;min-width:140px;padding:.52rem .8rem;background:var(--wh);border:1.5px solid rgba(201,150,58,.2);border-radius:9px;font-size:.8rem;font-family:'DM Sans',sans-serif;outline:none"
+          oninput="renderLeads()">
+        <select id="lead-filter"
+          style="padding:.52rem .6rem;background:var(--wh);border:1.5px solid rgba(201,150,58,.2);border-radius:9px;font-size:.76rem;font-family:'DM Sans',sans-serif;color:var(--tx);outline:none"
+          onchange="renderLeads()">
+          <option value="">All Stages</option>
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="interested">Interested</option>
+          <option value="registered">Registered</option>
+          <option value="profile_complete">Profile Complete</option>
+          <option value="payment_pending">Payment Pending</option>
+          <option value="converted">Converted ✅</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <button class="btn-primary" style="padding:.52rem 1rem;font-size:.76rem;white-space:nowrap" onclick="openAddLeadModal()">+ Add Lead</button>
+      </div>
+      <div id="leads-count" style="font-size:.68rem;color:var(--mu);margin-bottom:.5rem"></div>
+      <div id="leads-list"><div class="loading-full"><span class="spinner"></span> Loading leads…</div></div>
+    </div>
+
+    <!-- ── EARNINGS TAB ── -->
+    <div id="tab-earnings" class="tab-content">
+      <div class="kpi-strip" id="earn-kpi">
+        <div class="kpi"><div class="spinner"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💳 Request Payout</div>
+        <div id="payout-section"><div class="loading-full"><span class="spinner"></span></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">✅ My Conversions</div>
+        <div id="conversions-list"><div class="loading-full"><span class="spinner"></span></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📜 Payout History</div>
+        <div id="payout-history"><div class="loading-full"><span class="spinner"></span></div></div>
+      </div>
+    </div>
+
+    <!-- ── TOOLS TAB ── -->
+    <div id="tab-tools" class="tab-content">
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="ref-card">
+          <div style="font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.2rem">Your Referral Code</div>
+          <div class="ref-code" id="tools-ref-code">—</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.55);margin-bottom:.35rem">Share this link — every signup is credited to you automatically</div>
+          <div class="ref-link-box" id="tools-ref-link" onclick="copyText(this.dataset.link,'Link copied!')" title="Click to copy"></div>
+          <div style="display:flex;gap:.45rem;flex-wrap:wrap">
+            <button class="btn-copy" id="tools-copy-code">Copy Code</button>
+            <button class="btn-copy" id="tools-copy-link">Copy Link</button>
+            <a id="tools-wa-share" href="#" target="_blank" rel="noopener"
+              style="padding:.38rem .75rem;background:rgba(37,211,102,.15);color:#25d366;border:1px solid rgba(37,211,102,.3);border-radius:7px;font-size:.68rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem">
+              📱 Share on WhatsApp
+            </a>
+          </div>
+        </div>
+        <div style="padding:.9rem 1rem">
+          <div style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:.5rem">How it works</div>
+          <div style="font-size:.74rem;color:var(--mu);line-height:1.7">
+            1. Share your link or code with families.<br>
+            2. They register using your link — auto-credited to you.<br>
+            3. When they pay for a plan, you earn your commission.<br>
+            4. Request payout any time. Min ₹500. UPI transfer within 3 days.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💼 Current Membership Plans</div>
+        <div id="plan-info">
+          <div class="info-row"><span class="info-lbl">Silver (1 month)</span><span class="info-val" id="plan-1mo">Loading…</span></div>
+          <div class="info-row"><span class="info-lbl">Gold (3 months)</span><span class="info-val" id="plan-3mo">—</span></div>
+          <div class="info-row"><span class="info-lbl">Platinum (6 months)</span><span class="info-val" id="plan-6mo">—</span></div>
+          <div class="info-row"><span class="info-lbl">Diamond (12 months)</span><span class="info-val" id="plan-annual">—</span></div>
+          <div class="info-row"><span class="info-lbl">NRI Premium (12 months)</span><span class="info-val" id="plan-nri">—</span></div>
+          <div style="font-size:.65rem;color:var(--mu);margin-top:.55rem;line-height:1.6">
+            You earn your commission when a family you referred upgrades to any paid plan.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">👤 My Profile</div>
+        <div id="agent-profile-info"></div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.55rem;margin-top:.55rem">
+          <div style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)">Update Details</div>
+          <button class="act-btn bg-mu" onclick="openChangePasswordModal()" style="border-radius:4px;font-size:.6rem">🔑 Change Password</button>
+        </div>
+        <div class="f2">
+          <div class="f"><label>UPI ID</label><input id="prof-upi" placeholder="name@bank" autocomplete="off"></div>
+          <div class="f"><label>Area / Locality</label><input id="prof-area" placeholder="Your area"></div>
+        </div>
+        <button class="btn-sec" onclick="doUpdateProfile()">Save Changes</button>
+      </div>
+    </div>
+
+  </div><!-- end .page -->
+
+  <!-- BOTTOM TAB BAR -->
+  <div class="btabs">
+    <button class="btab active" onclick="switchTab('overview',this)">
+      <span class="btab-icon">📊</span>Overview
+      <span class="btab-badge" id="tab-badge-overview" style="display:none">0</span>
+    </button>
+    <button class="btab" onclick="switchTab('leads',this)">
+      <span class="btab-icon">👥</span>Leads
+    </button>
+    <button class="btab" onclick="switchTab('earnings',this)">
+      <span class="btab-icon">💰</span>Earnings
+    </button>
+    <button class="btab" onclick="switchTab('tools',this)">
+      <span class="btab-icon">🔧</span>Tools
+    </button>
+  </div>
+</div><!-- end #dashboard -->
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content">
+    <div class="modal-drag"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
+<script src="parichayam-firebase-config.js"></script>
+<script>
+'use strict';
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+const fbConfig = window.PARICHAYAM_FIREBASE_CONFIG || {};
+let fbApp = null, fbAuth = null;
+try {
+  fbApp = firebase.initializeApp(fbConfig);
+  fbAuth = firebase.auth();
+} catch(e){ console.warn('Firebase init:', e); }
+
+// State
+let AGENT = null;   // agent document
+let DASH  = null;   // full dashboard response
+let ALL_LEADS = []; // cached leads array
+
+// ══════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════
+function esc(v){ return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function maskPhone(p){ const s=String(p||''); return s.length>=10?s.slice(0,5)+'•••'+s.slice(-2):s; }
+function normPhone(v){ return String(v||'').replace(/\D/g,'').replace(/^91/,'').slice(-10); }
+function formatINR(v){ return '₹'+Math.round(Number(v||0)).toLocaleString('en-IN'); }
+function formatCommission(agent){
+  if(!agent) return '—';
+  const flat = Number(agent.commissionPerConversion);
+  if(Number.isFinite(flat) && flat>0) return formatINR(flat)+'/conversion';
+  const tier = String(agent.commissionTier||'').toLowerCase();
+  const map = {starter:'₹200/conversion',standard:'₹400/conversion',premium:'₹600/conversion'};
+  return map[tier]||'Contact admin';
+}
+
+function dateLabel(v){
+  if(!v) return '';
+  try{
+    const d = v.toDate ? v.toDate() : new Date(v._seconds ? v._seconds*1000 : v);
+    return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'});
+  }catch(e){ return String(v).slice(0,10); }
+}
+function timeAgo(v){
+  if(!v) return '';
+  try{
+    const d = v.toDate ? v.toDate() : new Date(v._seconds ? v._seconds*1000 : v);
+    const diff = Date.now()-d.getTime();
+    if(diff<60000) return 'just now';
+    if(diff<3600000) return Math.floor(diff/60000)+'m ago';
+    if(diff<86400000) return Math.floor(diff/3600000)+'h ago';
+    return Math.floor(diff/86400000)+'d ago';
+  }catch(e){ return ''; }
+}
+function today(){ return new Date().toISOString().slice(0,10); }
+function dateOnly(v){
+  if(!v) return '';
+  if(typeof v === 'string') return v.slice(0,10);
+  try{
+    const d = v.toDate ? v.toDate() : new Date(v._seconds ? v._seconds*1000 : v);
+    return d.toISOString().slice(0,10);
+  }catch(e){ return ''; }
+}
+function daysUntil(v){
+  const iso = dateOnly(v);
+  if(!iso) return null;
+  const todayDate = new Date(today()+'T00:00:00');
+  const targetDate = new Date(iso+'T00:00:00');
+  return Math.round((targetDate.getTime()-todayDate.getTime())/86400000);
+}
+function renderExpiryMeta(v){
+  const iso = dateOnly(v);
+  if(!iso) return '';
+  const delta = daysUntil(iso);
+  const label = delta===null ? 'Subscription status unavailable'
+    : delta < 0 ? 'Expired '+Math.abs(delta)+' day'+(Math.abs(delta)===1?'':'s')+' ago'
+    : delta === 0 ? 'Expires today'
+    : delta <= 7 ? 'Expires in '+delta+' day'+(delta===1?'':'s')
+    : 'Expires on '+dateLabel(iso);
+  const badgeClass = delta !== null && delta < 0 ? 'bg-rd'
+    : delta !== null && delta <= 7 ? 'bg-gd'
+    : 'bg-bl';
+  return '<div style="display:flex;gap:.35rem;align-items:center;flex-wrap:wrap;margin-top:.28rem">'
+    +'<span class="badge '+badgeClass+'">Subscription</span>'
+    +'<span style="font-size:.65rem;color:'+(badgeClass==='bg-rd'?'var(--rd)':badgeClass==='bg-gd'?'#92400e':'var(--bl)')+'">'+esc(label)+'</span>'
+    +'</div>';
+}
+function expiryPlainText(v){
+  const iso = dateOnly(v);
+  if(!iso) return '';
+  const delta = daysUntil(iso);
+  if(delta===null) return 'Subscription status unavailable';
+  if(delta < 0) return 'Subscription expired '+Math.abs(delta)+' day'+(Math.abs(delta)===1?'':'s')+' ago';
+  if(delta === 0) return 'Subscription expires today';
+  if(delta <= 7) return 'Subscription expires in '+delta+' day'+(delta===1?'':'s');
+  return 'Subscription expires on '+dateLabel(iso);
+}
+function getLeadById(id){ return ALL_LEADS.find(l=>l.id===id)||null; }
+function getLeadName(id){ return getLeadById(id)?.name||'Lead'; }
+function getCurrentLeadStage(id){ return getLeadById(id)?.stage||'new'; }
+function agentIsReadOnly(){ return !AGENT||AGENT.status!=='active'; }
+function getReadOnlyMsg(){
+  if(!AGENT) return 'Agent account not loaded.';
+  if(AGENT.status==='suspended') return 'Your account is suspended. Contact admin to reactivate.';
+  return 'Your account is inactive. Contact admin.';
+}
+
+function getFunctionsBase(){
+  const b = String(window.PARICHAYAM_FUNCTIONS_BASE_URL||'').trim().replace(/\/+$/,'');
+  if(b) return b;
+  const pid = String(fbConfig.projectId||'').trim();
+  return pid ? 'https://us-central1-'+pid+'.cloudfunctions.net' : '';
+}
+
+// ── HTTP helper ──
+async function agentFetch(path, opts){
+  opts = opts||{};
+  const base = getFunctionsBase();
+  if(!base) throw new Error('Backend not configured. Contact admin.');
+  const user = fbAuth&&fbAuth.currentUser;
+  if(!user) throw new Error('Session expired. Please sign in again.');
+  const token = await user.getIdToken(true);
+  const isPost = !!opts.body;
+  const resp = await fetch(base+'/'+path, {
+    method: isPost?'POST':'GET',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: isPost?JSON.stringify(opts.body):undefined,
+  });
+  const data = await resp.json().catch(()=>({}));
+  if(!resp.ok) throw new Error(data&&data.message ? data.message : 'Request failed ('+resp.status+')');
+  return data;
+}
+
+// ── Toast ──
+function toast(msg,type){
+  type = type||'info';
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast '+type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),300); }, 3500);
+}
+
+// ── Copy helper ──
+function copyText(text, successMsg){
+  const t = String(text||'');
+  if(!t) return;
+  if(navigator.clipboard&&window.isSecureContext){
+    navigator.clipboard.writeText(t).then(()=>toast(successMsg||'Copied!','success')).catch(()=>fallbackCopy(t,successMsg));
+  } else { fallbackCopy(t,successMsg); }
+}
+function fallbackCopy(text,msg){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast(msg||'Copied!','success'); }catch(e){ toast('Could not copy. Please copy manually.','error'); }
+  document.body.removeChild(ta);
+}
+
+// ══════════════════════════════════════════
+// STAGE DEFINITIONS
+// ══════════════════════════════════════════
+const STAGE_LABELS = {
+  new:'New', contacted:'Contacted', interested:'Interested',
+  registered:'Registered', profile_complete:'Profile Complete',
+  payment_pending:'Payment Pending', converted:'Converted', inactive:'Inactive'
+};
+const STAGE_COLORS = {
+  new:'#2563eb', contacted:'#b45309', interested:'#b45309',
+  registered:'#166534', profile_complete:'#166534',
+  payment_pending:'#dc2626', converted:'#166534', inactive:'#9ca3af'
+};
+const STAGE_BADGE_CLASS = {
+  new:'bg-bl', contacted:'bg-gd', interested:'bg-gd',
+  registered:'bg-gn', profile_complete:'bg-gn',
+  payment_pending:'bg-rd', converted:'bg-gn', inactive:'bg-mu'
+};
+const AGENT_STAGES = ['new','contacted','interested','registered','profile_complete','payment_pending','inactive'];
+
+function stageBadge(stage){
+  return '<span class="badge '+(STAGE_BADGE_CLASS[stage]||'bg-gd')+'">'+(STAGE_LABELS[stage]||stage)+'</span>';
+}
+
+// ══════════════════════════════════════════
+// AUTH FLOW
+// ══════════════════════════════════════════
+function switchLoginTab(tab){
+  ['signin','apply','success'].forEach(t=>{
+    const el = document.getElementById('ltab-'+t);
+    if(el) el.style.display = t===tab?'':'none';
+  });
+  document.querySelectorAll('.login-tabs button').forEach((b,i)=>{
+    const active = (i===0&&tab==='signin')||(i===1&&tab==='apply');
+    b.classList.toggle('active',active);
+  });
+}
+
+async function doLogin(){
+  const email = (document.getElementById('login-email').value||'').trim();
+  const pass  = document.getElementById('login-pass').value||'';
+  const errEl = document.getElementById('login-err');
+  const btn   = document.getElementById('login-btn');
+  errEl.style.display = 'none';
+  if(!email||!pass){ showLoginErr('Enter your email and password.'); return; }
+  btn.disabled=true; btn.textContent='Signing in…';
+  try {
+    await fbAuth.signInWithEmailAndPassword(email,pass);
+    // onAuthStateChanged will trigger loadDashboard
+  } catch(e){
+    const friendly = {
+      'auth/user-not-found':'No account found with this email.',
+      'auth/wrong-password':'Incorrect password. Contact admin if forgotten.',
+      'auth/invalid-credential':'Invalid email or password.',
+      'auth/user-disabled':'Your account has been disabled. Contact admin.',
+      'auth/too-many-requests':'Too many attempts. Please wait a few minutes.',
+      'auth/network-request-failed':'Network error. Check your connection.',
+    };
+    showLoginErr(friendly[e.code]||e.message||'Sign in failed.');
+  } finally { btn.disabled=false; btn.textContent='Sign In →'; }
+}
+
+function showLoginErr(msg){
+  const el = document.getElementById('login-err');
+  el.textContent = msg; el.style.display='block';
+}
+
+async function doApply(){
+  const name     = (document.getElementById('apply-name').value||'').trim();
+  const mobile   = (document.getElementById('apply-mobile').value||'').trim();
+  const city     = (document.getElementById('apply-city').value||'').trim();
+  const state    = document.getElementById('apply-state').value||'';
+  const network  = document.getElementById('apply-network').value||'';
+  const experience = (document.getElementById('apply-exp').value||'').trim();
+  const errEl    = document.getElementById('apply-err');
+  const btn      = document.getElementById('apply-btn');
+  errEl.style.display='none';
+  if(!name){ errEl.textContent='Enter your full name.'; errEl.style.display='block'; return; }
+  if(!mobile||mobile.length<10){ errEl.textContent='Enter a valid 10-digit mobile number.'; errEl.style.display='block'; return; }
+  if(!city){ errEl.textContent='Enter your city.'; errEl.style.display='block'; return; }
+  btn.disabled=true; btn.textContent='Submitting…';
+  try {
+    const base = getFunctionsBase();
+    if(!base) throw new Error('Backend not configured.');
+    const resp = await fetch(base+'/submitAgentApplication',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,mobile,city,state,network,experience,source:'agent-page'}),
+    });
+    const data = await resp.json().catch(()=>({}));
+    if(!resp.ok) throw new Error(data&&data.message?data.message:'Submission failed. Try again.');
+    switchLoginTab('success');
+  } catch(e){
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  } finally { btn.disabled=false; btn.textContent='Submit Application →'; }
+}
+
+function doLogout(){
+  fbAuth&&fbAuth.signOut().catch(()=>{});
+  AGENT=null; DASH=null; ALL_LEADS=[];
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('login-panel').style.display='flex';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pass').value='';
+}
+
+// Auto-login on page load
+if(fbAuth){
+  fbAuth.onAuthStateChanged(async user=>{
+    if(user&&!AGENT){
+      try{ await loadDashboard(); }
+      catch(e){ console.warn('Auto-login failed:',e); }
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD LOAD
+// ══════════════════════════════════════════
+async function loadDashboard(){
+  try{
+    DASH  = await agentFetch('agentGetDashboard');
+    AGENT = DASH.agent;
+    document.getElementById('login-panel').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    document.getElementById('nav-name').textContent = AGENT.name||'Agent';
+    renderStatusBanner();
+    renderOverview();
+    renderEarnings();
+    renderTools();
+    // Load leads separately (can be slower)
+    loadLeads();
+    loadPlanPrices();
+  } catch(e){
+    toast(e.message||'Failed to load dashboard.','error');
+    // If account closed or not found, log out
+    if(e.message&&(e.message.includes('not found')||e.message.includes('closed')||e.message.includes('deactivated'))){
+      setTimeout(doLogout,2000);
+    }
+  }
+}
+
+async function refreshDashboard(){
+  try{
+    DASH  = await agentFetch('agentGetDashboard');
+    AGENT = DASH.agent;
+    renderStatusBanner();
+    renderOverview();
+    renderEarnings();
+    renderTools();
+  } catch(e){ console.warn('Refresh failed:',e); }
+}
+
+// ══════════════════════════════════════════
+// STATUS BANNER
+// ══════════════════════════════════════════
+function renderStatusBanner(){
+  const area = document.getElementById('status-banner-area');
+  if(AGENT.status==='suspended'){
+    area.innerHTML = '<div class="status-banner suspended">⚠️ Your account is <strong>suspended</strong>. You can view your dashboard, but cannot add leads, update stages, or request payouts.'+(AGENT.statusReason?' Reason: '+esc(AGENT.statusReason):'')+'</div>';
+  } else if(AGENT.status==='deactivated'||AGENT.status==='inactive'){
+    area.innerHTML = '<div class="status-banner inactive">Your account is inactive. Please contact admin for assistance.</div>';
+  } else { area.innerHTML=''; }
+}
+
+// ══════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════
+function switchTab(tab,btn){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.btab').forEach(b=>b.classList.remove('active'));
+  const el = document.getElementById('tab-'+tab);
+  if(el) el.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// OVERVIEW TAB
+// ══════════════════════════════════════════
+function renderOverview(){
+  if(!DASH||!AGENT) return;
+  const k  = DASH.kpi||{};
+  const sc = DASH.stageCounts||{};
+
+  // ── KPIs ──
+  const balance = Number(k.availableBalance||0);
+  const converted = Number(k.converted||0);
+  const totalLeads = Number(k.totalLeads||0);
+  const convRate = totalLeads>0 ? Math.round(converted/totalLeads*100) : 0;
+  const nextGoal = converted<5?5:converted<10?10:converted<25?25:converted<50?50:Math.ceil(converted/50+1)*50;
+  const goalPct  = Math.min(100,Math.round(converted/nextGoal*100));
+
+  document.getElementById('kpi-strip').innerHTML =
+    '<div class="kpi"><div class="kpi-val">'+formatINR(balance)+'</div><div class="kpi-lbl">Available Balance</div></div>'
+   +'<div class="kpi"><div class="kpi-val">'+totalLeads+'</div><div class="kpi-lbl">Total Leads</div></div>'
+   +'<div class="kpi"><div class="kpi-val">'+converted+'</div><div class="kpi-lbl">Converted</div><div class="kpi-sub">Goal: '+nextGoal+'</div>'
+      +'<div class="goal-bar-wrap"><div class="goal-bar" style="width:'+goalPct+'%"></div></div></div>'
+   +'<div class="kpi"><div class="kpi-val">'+convRate+'%</div><div class="kpi-lbl">Conv. Rate</div></div>'
+   +'<div class="kpi"><div class="kpi-val">'+formatCommission(AGENT)+'</div><div class="kpi-lbl">My Commission</div></div>';
+
+  // ── Pipeline bar ──
+  const stages = ['new','contacted','interested','registered','profile_complete','payment_pending','converted'];
+  const total  = stages.reduce((s,st)=>s+(sc[st]||0),0)||1;
+  document.getElementById('pipeline-bar').innerHTML =
+    '<div class="pipeline" style="margin-bottom:.85rem">'
+    +stages.map(st=>{
+      const c   = sc[st]||0;
+      const pct = Math.max(6,Math.round(c/total*100));
+      return '<div class="pipe-seg" style="background:'+STAGE_COLORS[st]+';flex:'+pct+'" onclick="filterLeadsByStage(\''+st+'\')" title="'+(STAGE_LABELS[st]||st)+': '+c+'">'
+        +'<span class="pipe-n">'+c+'</span>'
+        +'<span class="pipe-lbl">'+esc((STAGE_LABELS[st]||st).split(' ')[0])+'</span>'
+        +'</div>';
+    }).join('')
+    +'</div>';
+
+  // ── Follow-ups ──
+  const fups   = DASH.followUps||[];
+  const fupEl  = document.getElementById('followup-list');
+  const badge  = document.getElementById('followup-count-badge');
+  const tabBadge = document.getElementById('tab-badge-overview');
+  if(fups.length>0){
+    badge.textContent=fups.length; badge.style.display='inline-block';
+    tabBadge.textContent=fups.length; tabBadge.style.display='flex';
+  } else {
+    badge.style.display='none'; tabBadge.style.display='none';
+  }
+
+  if(!fups.length){
+    fupEl.innerHTML='<div class="empty-state">🎉 No follow-ups due! You\'re all caught up.</div>';
+  } else {
+    const td = today();
+    fupEl.innerHTML = fups.map(l=>{
+      const overdue  = l.followUpDate<td;
+      const dueToday = l.followUpDate===td;
+      const cls = overdue?'overdue':dueToday?'due-today':'upcoming';
+      const lbl = overdue?'⚠ OVERDUE: '+l.followUpDate:dueToday?'📅 Due Today: '+l.followUpDate:'📅 '+l.followUpDate;
+      const ph  = normPhone(l.mobile);
+      return '<div class="lcard'+(overdue?' overdue-card':'')+'">'
+        +'<div class="lc-top"><div><div class="lc-name">'+esc(l.name)+'</div><div class="lc-det">'+maskPhone(l.mobile)+(l.city?' · '+esc(l.city):'')+'</div></div>'
+        +stageBadge(l.stage)+'</div>'
+        +'<div class="lc-fu '+cls+'">'+lbl+'</div>'
+        +'<div class="lc-actions">'
+        +(ph?'<a href="tel:+91'+ph+'" class="act-btn bg-bl" style="text-decoration:none">📞 Call</a>':'')
+        +(ph?'<a href="https://wa.me/91'+ph+'" target="_blank" rel="noopener" class="act-btn bg-gn" style="text-decoration:none;background:rgba(37,211,102,.12);color:#166534;border:1px solid rgba(37,211,102,.2)">💬 WhatsApp</a>':'')
+        +'<button class="act-btn bg-gd" onclick="openNoteModal(\''+l.id+'\')" '+(agentIsReadOnly()?'disabled':'')+ '>📝 Note</button>'
+        +'<button class="act-btn bg-gn" onclick="markFollowUpDone(\''+l.id+'\')" '+(agentIsReadOnly()?'disabled style="opacity:.5;cursor:not-allowed"':'')+ '>✓ Done</button>'
+        +'</div></div>';
+    }).join('');
+  }
+
+  // ── Activity ──
+  const acts  = DASH.recentActivity||[];
+  const actEl = document.getElementById('activity-list');
+  if(!acts.length){
+    actEl.innerHTML='<div class="empty-state" style="border:none;padding:.5rem">No recent activity yet.</div>';
+  } else {
+    const colors = {lead_added:'var(--bl)',stage_changed:'var(--g)',note_added:'var(--mu)',lead_converted:'var(--gn)',payout_requested:'var(--g)',payout_paid:'var(--gn)',lead_auto_created:'var(--bl)',agent_created:'var(--gn)'};
+    actEl.innerHTML = acts.map(a=>
+      '<div class="act-item">'
+      +'<div class="act-dot" style="background:'+(colors[a.type]||'var(--mu)')+'"></div>'
+      +'<div><div class="act-text">'+esc(a.description)+'</div><div class="act-time">'+timeAgo(a.createdAt)+'</div></div>'
+      +'</div>'
+    ).join('');
+  }
+}
+
+// ══════════════════════════════════════════
+// LEADS TAB
+// ══════════════════════════════════════════
+async function loadLeads(){
+  try{
+    const data  = await agentFetch('agentGetLeads');
+    ALL_LEADS   = data.leads||[];
+    renderLeads();
+    renderEarnings(); // refresh conversions with fresh lead data
+  } catch(e){
+    document.getElementById('leads-list').innerHTML =
+      '<div class="empty-state" style="border-color:rgba(220,38,38,.2);color:var(--rd)">'+esc(e.message)+'</div>';
+  }
+}
+
+function renderLeads(){
+  const search = (document.getElementById('lead-search')?.value||'').toLowerCase().trim();
+  const filter = document.getElementById('lead-filter')?.value||'';
+  let list = ALL_LEADS;
+  if(filter) list = list.filter(l=>l.stage===filter);
+  if(search) list = list.filter(l=>
+    (l.name||'').toLowerCase().includes(search)||
+    (l.mobile||'').includes(search)||
+    (l.city||'').toLowerCase().includes(search)
+  );
+  const countEl = document.getElementById('leads-count');
+  if(countEl) countEl.textContent = list.length+' of '+ALL_LEADS.length+' leads'+(filter||search?' (filtered)':'');
+  const el = document.getElementById('leads-list');
+  if(!el) return;
+  if(!list.length){
+    el.innerHTML = '<div class="empty-state">'+(ALL_LEADS.length?'No leads match your filter.':'No leads yet. Tap + Add Lead to get started!')+'</div>';
+    return;
+  }
+  const td = today();
+  el.innerHTML = list.map(l=>{
+    const lastNote = Array.isArray(l.notes)&&l.notes.length ? l.notes[l.notes.length-1] : null;
+    const hasFU    = l.followUpDate&&!l.followUpDone&&l.stage!=='converted'&&l.stage!=='inactive';
+    const overdue  = hasFU&&l.followUpDate<td;
+    const dueToday = hasFU&&l.followUpDate===td;
+    const ph = normPhone(l.mobile);
+    const isConverted = l.stage==='converted';
+    const paidAmount = Number(l.paidAmount||0);
+    const earnedAmount = Number(l.commissionAmount||0);
+    return '<div class="lcard'+(isConverted?' converted':overdue?' overdue-card':'')+'">'
+      +'<div class="lc-top">'
+      +'<div><div class="lc-name">'+esc(l.name)+'</div>'
+      +'<div class="lc-det">'+maskPhone(l.mobile)+(l.city?' · '+esc(l.city):'')+(l.source==='referral-link'?' · Via Link':'')+(l.createdAt?' · '+dateLabel(l.createdAt):'')+'</div>'
+      +'</div>'
+      +stageBadge(l.stage)
+      +'</div>'
+      +(lastNote?'<div class="lc-note">"'+esc((lastNote.text||'').slice(0,100))+'…"</div>':'')
+      +(hasFU?'<div class="lc-fu '+(overdue?'overdue':dueToday?'due-today':'upcoming')+'">📅 '+(overdue?'OVERDUE: ':'')+l.followUpDate+'</div>':'')
+      +(isConverted?'<div style="font-size:.67rem;color:var(--gn);margin-top:.28rem;line-height:1.5">✅ Paid '+formatINR(paidAmount)+' · You earned '+formatINR(earnedAmount)+'</div>':'')
+      +(l.subscriptionExpiryDate?renderExpiryMeta(l.subscriptionExpiryDate):'')
+      +'<div class="lc-actions">'
+      +(ph?'<a href="tel:+91'+ph+'" class="act-btn bg-bl" style="text-decoration:none">📞 Call</a>':'')
+      +(ph?'<a href="https://wa.me/91'+ph+'" target="_blank" rel="noopener" class="act-btn bg-gn" style="text-decoration:none;background:rgba(37,211,102,.12);color:#166534;border:1px solid rgba(37,211,102,.2)">💬 WA</a>':'')
+      +'<button class="act-btn bg-gd" onclick="openNoteModal(\''+l.id+'\')" '+(agentIsReadOnly()?'disabled':'')+ '>📝 Note</button>'
+      +(!isConverted?'<button class="act-btn bg-bl" onclick="openStageModal(\''+l.id+'\')" '+(agentIsReadOnly()?'disabled':'')+ '>🔄 Stage</button>':'')
+      +'<button class="act-btn bg-gd" onclick="openFollowUpModal(\''+l.id+'\')" '+(agentIsReadOnly()?'disabled':'')+ '>📅 Follow-Up</button>'
+      +'</div></div>';
+  }).join('');
+}
+
+function filterLeadsByStage(stage){
+  const filter = document.getElementById('lead-filter');
+  if(filter) filter.value = stage;
+  switchTab('leads',document.querySelectorAll('.btab')[1]);
+  renderLeads();
+}
+
+// ══════════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════════
+function openModal(html){
+  document.getElementById('modal-content').innerHTML = '<div class="modal-drag"></div>'+html;
+  document.getElementById('modal-overlay').classList.add('show');
+  // Focus first input
+  setTimeout(()=>{ const inp=document.querySelector('#modal-content input'); if(inp) inp.focus(); },100);
+}
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+// ── Add Lead ──
+function openAddLeadModal(){
+  if(agentIsReadOnly()){ toast(getReadOnlyMsg(),'error'); return; }
+  openModal(
+    '<div class="modal-title">➕ Add New Lead</div>'
+   +'<div class="f"><label>Full Name *</label><input id="ml-name" placeholder="Lead\'s full name" autocomplete="off"></div>'
+   +'<div class="f2">'
+   +'<div class="f"><label>Mobile *</label><input id="ml-mobile" type="tel" maxlength="10" placeholder="10-digit number" oninput="this.value=this.value.replace(/\\D/g,\'\')"></div>'
+   +'<div class="f"><label>City</label><input id="ml-city" placeholder="Their city"></div>'
+   +'</div>'
+   +'<div class="f"><label>Note (optional)</label><textarea id="ml-note" rows="2" placeholder="How you know them, initial interest level…" style="resize:none"></textarea></div>'
+   +'<div style="display:flex;gap:.5rem;margin-top:.3rem">'
+   +'<button class="btn-primary" onclick="doAddLead()" id="ml-btn">Add Lead</button>'
+   +'<button class="btn-sec" onclick="closeModal()">Cancel</button>'
+   +'</div>'
+  );
+}
+
+async function doAddLead(){
+  const name   = (document.getElementById('ml-name').value||'').trim();
+  const mobile = (document.getElementById('ml-mobile').value||'').trim();
+  const city   = (document.getElementById('ml-city').value||'').trim();
+  const note   = (document.getElementById('ml-note').value||'').trim();
+  const btn    = document.getElementById('ml-btn');
+  if(!name){ toast('Enter the lead\'s name.','error'); return; }
+  if(!mobile||mobile.length<10){ toast('Enter a valid 10-digit mobile number.','error'); return; }
+  btn.disabled=true; btn.textContent='Adding…';
+  try{
+    await agentFetch('agentAddLead',{body:{name,mobile,city,note}});
+    toast(name+' added as a new lead!','success');
+    closeModal();
+    await loadLeads();
+    await refreshDashboard();
+  } catch(e){ toast(e.message,'error'); }
+  finally{ btn.disabled=false; btn.textContent='Add Lead'; }
+}
+
+// ── Add Note ──
+function openNoteModal(leadId){
+  if(agentIsReadOnly()){ toast(getReadOnlyMsg(),'error'); return; }
+  const name = getLeadName(leadId);
+  openModal(
+    '<div class="modal-title">📝 Add Note — '+esc(name)+'</div>'
+   +'<div class="f"><label>Note</label><textarea id="mn-text" rows="3" placeholder="Call outcome, family feedback, next step…" style="resize:none"></textarea></div>'
+   +'<div style="display:flex;gap:.5rem">'
+   +'<button class="btn-primary" onclick="doAddNote(\''+leadId+'\')" id="mn-btn">Save Note</button>'
+   +'<button class="btn-sec" onclick="closeModal()">Cancel</button>'
+   +'</div>'
+  );
+}
+
+async function doAddNote(leadId){
+  const note = (document.getElementById('mn-text').value||'').trim();
+  const btn  = document.getElementById('mn-btn');
+  if(!note){ toast('Write a note first.','error'); return; }
+  btn.disabled=true; btn.textContent='Saving…';
+  try{
+    await agentFetch('agentUpdateLead',{body:{leadId,note}});
+    toast('Note saved.','success');
+    closeModal();
+    await loadLeads();
+  } catch(e){ toast(e.message,'error'); }
+  finally{ btn.disabled=false; btn.textContent='Save Note'; }
+}
+
+// ── Change Stage ──
+function openStageModal(leadId){
+  if(agentIsReadOnly()){ toast(getReadOnlyMsg(),'error'); return; }
+  const name  = getLeadName(leadId);
+  const cur   = getCurrentLeadStage(leadId);
+  const opts  = AGENT_STAGES.filter(s=>s!==cur)
+    .map(s=>'<option value="'+s+'">'+(STAGE_LABELS[s]||s)+'</option>').join('');
+  openModal(
+    '<div class="modal-title">🔄 Change Stage — '+esc(name)+'</div>'
+   +'<div style="font-size:.74rem;color:var(--mu);margin-bottom:.75rem">Current stage: '+stageBadge(cur)+'</div>'
+   +'<div class="f"><label>Move to</label><select id="ms-stage">'+opts+'</select></div>'
+   +'<div style="font-size:.65rem;color:var(--mu);margin-bottom:.8rem;line-height:1.5">💡 "Converted" is set automatically when the member makes a payment.</div>'
+   +'<div style="display:flex;gap:.5rem">'
+   +'<button class="btn-primary" onclick="doChangeStage(\''+leadId+'\')" id="ms-btn">Update Stage</button>'
+   +'<button class="btn-sec" onclick="closeModal()">Cancel</button>'
+   +'</div>'
+  );
+}
+
+async function doChangeStage(leadId){
+  const stage = document.getElementById('ms-stage').value;
+  const btn   = document.getElementById('ms-btn');
+  btn.disabled=true; btn.textContent='Updating…';
+  try{
+    await agentFetch('agentUpdateLead',{body:{leadId,stage}});
+    toast('Stage updated to '+( STAGE_LABELS[stage]||stage)+'.','success');
+    closeModal();
+    await loadLeads();
+    await refreshDashboard();
+  } catch(e){ toast(e.message,'error'); }
+  finally{ btn.disabled=false; btn.textContent='Update Stage'; }
+}
+
+// ── Set Follow-Up ──
+function openFollowUpModal(leadId){
+  if(agentIsReadOnly()){ toast(getReadOnlyMsg(),'error'); return; }
+  const name  = getLeadName(leadId);
+  const lead  = getLeadById(leadId);
+  const existingDate = lead&&lead.followUpDate&&!lead.followUpDone ? lead.followUpDate : '';
+  const minDate = today();
+  const defaultDate = existingDate||new Date(Date.now()+86400000).toISOString().slice(0,10);
+  openModal(
+    '<div class="modal-title">📅 Set Follow-Up — '+esc(name)+'</div>'
+   +(existingDate?'<div style="font-size:.73rem;color:var(--mu);margin-bottom:.65rem">Current: '+existingDate+'</div>':'')
+   +'<div class="f"><label>Follow-Up Date</label><input id="mf-date" type="date" value="'+defaultDate+'" min="'+minDate+'"></div>'
+   +'<div style="display:flex;gap:.5rem">'
+   +'<button class="btn-primary" onclick="doSetFollowUp(\''+leadId+'\')" id="mf-btn">Set Follow-Up</button>'
+   +'<button class="btn-sec" onclick="closeModal()">Cancel</button>'
+   +'</div>'
+  );
+}
+
+async function doSetFollowUp(leadId){
+  const date = document.getElementById('mf-date').value;
+  const btn  = document.getElementById('mf-btn');
+  if(!date){ toast('Pick a date.','error'); return; }
+  btn.disabled=true; btn.textContent='Setting…';
+  try{
+    await agentFetch('agentUpdateLead',{body:{leadId,followUpDate:date}});
+    toast('Follow-up set for '+date+'.','success');
+    closeModal();
+    await loadLeads();
+    await refreshDashboard();
+  } catch(e){ toast(e.message,'error'); }
+  finally{ btn.disabled=false; btn.textContent='Set Follow-Up'; }
+}
+
+async function markFollowUpDone(leadId){
+  if(agentIsReadOnly()){ toast(getReadOnlyMsg(),'error'); return; }
+  try{
+    await agentFetch('agentUpdateLead',{body:{leadId,followUpDone:true}});
+    toast('Follow-up marked done ✓','success');
+    await refreshDashboard();
+    await loadLeads();
+  } catch(e){ toast(e.message,'error'); }
+}
+
+// ══════════════════════════════════════════
+// EARNINGS TAB
+// ══════════════════════════════════════════
+function renderEarnings(){
+  if(!AGENT||!DASH) return;
+  const kpi      = DASH.kpi||{};
+  const balance  = Number(kpi.availableBalance||0);
+  const earned   = Number(AGENT.totalEarned||0);
+  const paidOut  = Number(AGENT.totalPaidOut||0);
+  const pending  = Number(kpi.pendingPayoutAmount||0);
+  const minPayout = Number(DASH.minimumPayoutAmount||500);
+
+  // KPIs
+  document.getElementById('earn-kpi').innerHTML =
+    '<div class="kpi"><div class="kpi-val">'+formatINR(earned)+'</div><div class="kpi-lbl">Total Earned</div></div>'
+   +'<div class="kpi"><div class="kpi-val">'+formatINR(paidOut)+'</div><div class="kpi-lbl">Total Paid Out</div></div>'
+   +(pending>0?'<div class="kpi"><div class="kpi-val" style="color:#92400e">'+formatINR(pending)+'</div><div class="kpi-lbl">Pending Payout</div></div>':'')
+   +'<div class="kpi"><div class="kpi-val" style="color:var(--gn)">'+formatINR(balance)+'</div><div class="kpi-lbl">Available Now</div></div>'
+   +'<div class="kpi"><div class="kpi-val">'+(AGENT.totalConversions||0)+'</div><div class="kpi-lbl">Conversions</div></div>';
+
+  // Payout section
+  const isSuspended = AGENT.status==='suspended';
+  const hasHold     = AGENT.payoutHold;
+  const hasPending  = pending>0;
+  const payEl       = document.getElementById('payout-section');
+
+  if(isSuspended){
+    payEl.innerHTML = '<div style="font-size:.78rem;color:var(--rd);line-height:1.6">🚫 Your account is suspended. Payout requests are blocked until admin reactivates you.</div>';
+  } else if(hasHold){
+    payEl.innerHTML = '<div style="font-size:.78rem;color:var(--rd);line-height:1.6">⏸ Payouts are temporarily on hold. '+(AGENT.payoutHoldReason||'Contact admin for details.')+'</div>';
+  } else if(hasPending){
+    payEl.innerHTML = '<div style="font-size:.78rem;color:#92400e;background:rgba(201,150,58,.1);border:1px solid rgba(201,150,58,.2);border-radius:8px;padding:.6rem .8rem;line-height:1.6">⏳ You have a payout request of '+formatINR(pending)+' pending. Admin will process it within 3 business days.</div>';
+  } else {
+    const canRequest = balance>=minPayout;
+    const payoutProgress = Math.max(0,Math.min(100,Math.round((balance/minPayout)*100)));
+    payEl.innerHTML =
+      '<div style="font-size:.76rem;color:var(--mu);margin-bottom:.65rem;line-height:1.6">'
+      +'Available balance: <strong style="color:var(--tx)">'+formatINR(balance)+'</strong> · Minimum: '+formatINR(minPayout)+' · Processed within 3 business days via UPI'
+      +'</div>'
+      +'<div style="font-size:.67rem;color:var(--mu);margin-bottom:.32rem">Payout eligibility progress</div>'
+      +'<div class="goal-bar-wrap" style="margin-bottom:.72rem"><div class="goal-bar" style="width:'+payoutProgress+'%"></div></div>'
+      +'<div style="font-size:.65rem;color:'+(canRequest?'var(--gn)':'var(--mu)')+';margin:-.15rem 0 .7rem;line-height:1.5">'
+      +(canRequest?'You are eligible to request a payout now.':'Earn '+formatINR(Math.max(0,minPayout-balance))+' more to unlock payout.')
+      +'</div>'
+      +'<div class="f2">'
+      +'<div class="f"><label>UPI ID</label><input id="pay-upi" value="'+esc(AGENT.upiId||'')+'" placeholder="name@bank" autocomplete="off"></div>'
+      +'<div class="f"><label>Note (optional)</label><input id="pay-note" placeholder="Optional note"></div>'
+      +'</div>'
+      +'<button class="btn-primary" onclick="doRequestPayout()" id="pay-btn" '+(canRequest?'':'disabled style="opacity:.5;cursor:not-allowed"')+'>'
+      +(canRequest?'Request Payout — '+formatINR(balance):'Balance below '+formatINR(minPayout)+' minimum')
+      +'</button>';
+  }
+
+  // Conversions
+  const converted = ALL_LEADS.filter(l=>l.stage==='converted');
+  const convEl    = document.getElementById('conversions-list');
+  if(convEl){
+    if(!converted.length){
+      convEl.innerHTML = '<div class="empty-state">No conversions yet. Keep following up with your leads!</div>';
+    } else {
+      convEl.innerHTML = converted.map(l=>
+        '<div class="info-row">'
+        +'<div><div style="font-size:.82rem;font-weight:500">'+esc(l.name)+'</div>'
+        +'<div style="font-size:.63rem;color:var(--mu);line-height:1.55">'
+        +esc(l.city||'')+(l.convertedAt||l.updatedAt?' · '+dateLabel(l.convertedAt||l.updatedAt):'')
+        +'<br>Paid '+formatINR(l.paidAmount||0)+' · You earned '+formatINR(l.commissionAmount||0)
+        +(l.subscriptionExpiryDate?'<br>'+esc(expiryPlainText(l.subscriptionExpiryDate)):'')
+        +'</div></div>'
+        +'<div style="text-align:right"><div style="font-family:\'Playfair Display\',serif;font-size:1.1rem;color:var(--gn)">+'+formatINR(l.commissionAmount||0)+'</div>'
+        +'<div style="font-size:.58rem;color:var(--mu);margin-top:-.15rem">Earned</div></div>'
+        +'</div>'
+      ).join('');
+    }
+  }
+
+  // Payout history
+  const histEl   = document.getElementById('payout-history');
+  const history  = DASH.payoutHistory||[];
+  if(histEl){
+    if(!history.length){
+      histEl.innerHTML='<div class="empty-state">No payouts processed yet.</div>';
+    } else {
+      histEl.innerHTML = history.map(h=>
+        '<div class="info-row">'
+        +'<div><div style="font-size:.8rem;font-weight:500">'+formatINR(h.amount)+'</div>'
+        +'<div style="font-size:.63rem;color:var(--mu)">'+(h.status==='paid'?'✅ Paid':'⏳ Pending')+' · '+dateLabel(h.requestedAt||h.createdAt)+'</div></div>'
+        +'<span class="badge '+(h.status==='paid'?'bg-gn':'bg-gd')+'">'+esc(h.status)+'</span>'
+        +'</div>'
+      ).join('');
+    }
+  }
+}
+
+async function doRequestPayout(){
+  const upi  = (document.getElementById('pay-upi')?.value||'').trim();
+  const note = (document.getElementById('pay-note')?.value||'').trim();
+  const btn  = document.getElementById('pay-btn');
+  if(!upi){ toast('Enter your UPI ID to receive the payout.','error'); return; }
+  btn.disabled=true; btn.textContent='Submitting…';
+  try{
+    const result = await agentFetch('agentRequestPayout',{body:{upiId:upi,note}});
+    toast('Payout of '+formatINR(result.amount)+' requested! Processed in 3 days.','success');
+    await refreshDashboard();
+    renderEarnings();
+  } catch(e){ toast(e.message,'error'); }
+  finally{ btn.disabled=false; btn.textContent='Request Payout'; }
+}
+
+function openChangePasswordModal(){
+  if(!AGENT){ toast('Agent profile not loaded yet.','error'); return; }
+  openModal(
+    '<div class="modal-title">🔑 Change Password</div>'
+   +'<div style="font-size:.72rem;color:var(--mu);line-height:1.6;margin-bottom:.8rem">Use a strong new password with at least 8 characters. This updates your secure agent login immediately.</div>'
+   +'<div class="f"><label>New Password</label><input id="mp-pass1" type="password" minlength="8" placeholder="Enter new password" autocomplete="new-password"></div>'
+   +'<div class="f"><label>Confirm Password</label><input id="mp-pass2" type="password" minlength="8" placeholder="Re-enter new password" autocomplete="new-password"></div>'
+   +'<div style="display:flex;gap:.5rem">'
+   +'<button class="btn-primary" onclick="doChangePassword()" id="mp-btn">Update Password</button>'
+   +'<button class="btn-sec" onclick="closeModal()">Cancel</button>'
+   +'</div>'
+  );
+}
+
+async function doChangePassword(){
+  const pass1 = (document.getElementById('mp-pass1')?.value||'').trim();
+  const pass2 = (document.getElementById('mp-pass2')?.value||'').trim();
+  const btn = document.getElementById('mp-btn');
+  if(pass1.length < 8){ toast('Password must be at least 8 characters.','error'); return; }
+  if(pass1 !== pass2){ toast('Passwords do not match.','error'); return; }
+  btn.disabled = true; btn.textContent = 'Updating…';
+  try{
+    await agentFetch('agentChangePassword',{body:{newPassword:pass1}});
+    AGENT.passwordChangedAt = new Date().toISOString();
+    renderTools();
+    toast('Password updated successfully. Please keep it safe.','success');
+    closeModal();
+  } catch(e){ toast(e.message,'error'); }
+  finally{
+    btn.disabled = false;
+    btn.textContent = 'Update Password';
+  }
+}
+
+// ══════════════════════════════════════════
+// TOOLS TAB
+// ══════════════════════════════════════════
+function renderTools(){
+  if(!AGENT) return;
+  const code = AGENT.referralCode||'';
+  const base = window.location.origin||'';
+  const link = base+'/auth.html?ref='+encodeURIComponent(code);
+  const waText = encodeURIComponent(
+    'Namaste! Looking for a trusted Telugu matrimony match?\n\nRegister FREE on Parichayam — verified profiles, community-first matching.\n\nSign up here: '+link+'\n\nCode: '+code
+  );
+
+  // Set referral card
+  const codeEl = document.getElementById('tools-ref-code');
+  const linkEl = document.getElementById('tools-ref-link');
+  if(codeEl) codeEl.textContent = code||'—';
+  if(linkEl){ linkEl.textContent=link; linkEl.dataset.link=link; }
+
+  const copyCodeBtn = document.getElementById('tools-copy-code');
+  const copyLinkBtn = document.getElementById('tools-copy-link');
+  const waBtn       = document.getElementById('tools-wa-share');
+  if(copyCodeBtn) copyCodeBtn.onclick = ()=>copyText(code,'Referral code copied!');
+  if(copyLinkBtn) copyLinkBtn.onclick = ()=>copyText(link,'Signup link copied!');
+  if(waBtn) waBtn.href = 'https://wa.me/?text='+waText;
+
+  // Profile info
+  const profEl = document.getElementById('agent-profile-info');
+  if(profEl){
+    profEl.innerHTML =
+      '<div class="info-row"><span class="info-lbl">Name</span><span class="info-val">'+esc(AGENT.name||'—')+'</span></div>'
+     +'<div class="info-row"><span class="info-lbl">Mobile</span><span class="info-val">'+esc(AGENT.mobile||'—')+'</span></div>'
+     +'<div class="info-row"><span class="info-lbl">City</span><span class="info-val">'+esc(AGENT.city||'—')+'</span></div>'
+     +'<div class="info-row"><span class="info-lbl">Commission</span><span class="info-val" style="color:var(--gn)">'+formatCommission(AGENT)+'</span></div>'
+     +'<div class="info-row"><span class="info-lbl">Status</span><span class="info-val">'+stageBadge(AGENT.status)+'</span></div>'
+     +'<div class="info-row"><span class="info-lbl">UPI ID</span><span class="info-val">'+esc(AGENT.upiId||'Not set')+'</span></div>'
+     +'<div class="info-row"><span class="info-lbl">Password Updated</span><span class="info-val">'+esc(AGENT.passwordChangedAt?dateLabel(AGENT.passwordChangedAt):'Pending first secure change')+'</span></div>'
+     +'<div class="info-row"><span class="info-lbl">Referral Code</span><span class="info-val" style="font-weight:600;color:var(--m)">'+esc(code)+'</span></div>';
+  }
+
+  // Pre-fill update fields
+  const upiEl  = document.getElementById('prof-upi');
+  const areaEl = document.getElementById('prof-area');
+  if(upiEl)  upiEl.value  = AGENT.upiId||'';
+  if(areaEl) areaEl.value = AGENT.area||'';
+}
+
+// Load plan prices from localStorage (set by admin panel)
+function loadPlanPrices(){
+  try{
+    const prices = JSON.parse(localStorage.getItem('parichayam_plan_prices')||'{}');
+    const fmt = (k,fallback)=>{ const v=prices[k]; return v?'₹'+Number(v).toLocaleString('en-IN'):fallback; };
+    const $ = id=>document.getElementById(id);
+    if($('plan-1mo'))     $('plan-1mo').textContent     = fmt('1mo','₹999');
+    if($('plan-3mo'))     $('plan-3mo').textContent     = fmt('3mo','₹2,499');
+    if($('plan-6mo'))     $('plan-6mo').textContent     = fmt('6mo','₹3,999');
+    if($('plan-annual'))  $('plan-annual').textContent  = fmt('annual','₹5,999');
+    if($('plan-nri'))     $('plan-nri').textContent     = fmt('nri','₹9,999');
+  } catch(e){ /* fallback values already shown */ }
+}
+
+async function doUpdateProfile(){
+  if(agentIsReadOnly()){ toast(getReadOnlyMsg(),'error'); return; }
+  const upiId = (document.getElementById('prof-upi')?.value||'').trim();
+  const area  = (document.getElementById('prof-area')?.value||'').trim();
+  try{
+    await agentFetch('agentUpdateProfile',{body:{upiId,area}});
+    AGENT.upiId = upiId;
+    AGENT.area  = area;
+    renderTools();
+    toast('Profile updated successfully.','success');
+  } catch(e){ toast(e.message,'error'); }
+}
+</script>
+</body>
+</html>

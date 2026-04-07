@@ -1,0 +1,87 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      ".firebaserc",
+      ".firebaserc.example",
+      "firestore.rules",
+      "firestore.indexes.json",
+      "storage.rules",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "cleanUrls": true,
+    "redirects": [
+      {
+        "source": "/terms.html",
+        "destination": "/terms",
+        "type": 301
+      },
+      {
+        "source": "/privacy.html",
+        "destination": "/privacy",
+        "type": 301
+      },
+      {
+        "source": "/contact.html",
+        "destination": "/contact",
+        "type": 301
+      },
+      {
+        "source": "/refund-policy.html",
+        "destination": "/refund-policy",
+        "type": 301
+      },
+      {
+        "source": "/shipping-policy.html",
+        "destination": "/shipping-policy",
+        "type": 301
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/terms",
+        "destination": "/terms.html"
+      },
+      {
+        "source": "/privacy",
+        "destination": "/privacy.html"
+      },
+      {
+        "source": "/contact",
+        "destination": "/contact.html"
+      },
+      {
+        "source": "/refund-policy",
+        "destination": "/refund-policy.html"
+      },
+      {
+        "source": "/shipping-policy",
+        "destination": "/shipping-policy.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(html|js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs22"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}

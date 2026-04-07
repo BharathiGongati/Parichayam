@@ -1,0 +1,52 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() &&
+        firestore.exists(/databases/(default)/documents/members/$(request.auth.uid)) &&
+        firestore.get(/databases/(default)/documents/members/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+
+    function currentMemberRole() {
+      return signedIn() &&
+        firestore.exists(/databases/(default)/documents/members/$(request.auth.uid))
+        ? firestore.get(/databases/(default)/documents/members/$(request.auth.uid)).data.role
+        : '';
+    }
+
+    function isStaff() {
+      return signedIn() &&
+        currentMemberRole() in ['ADMIN', 'MATCHMAKER', 'EMPLOYEE'];
+    }
+
+    function isAssignedStaff(uid) {
+      return isStaff() &&
+        firestore.exists(/databases/(default)/documents/members/$(uid)) && (
+          firestore.get(/databases/(default)/documents/members/$(uid)).data.assignedMatchmakerUid == request.auth.uid ||
+          firestore.get(/databases/(default)/documents/members/$(uid)).data.assignedVerificationStaffUid == request.auth.uid
+        );
+    }
+
+    match /members/{uid}/{allPaths=**} {
+      allow read: if signedIn() && (
+        request.auth.uid == uid ||
+        isAdmin() ||
+        isAssignedStaff(uid)
+      );
+      allow write: if signedIn() && (request.auth.uid == uid || isAdmin());
+    }
+
+    match /site/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

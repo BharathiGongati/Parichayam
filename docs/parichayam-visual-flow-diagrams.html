@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parichayam Visual Flow Diagrams</title>
+<style>
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4ede4;color:#2d2018}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 22px 48px}
+  h1,h2{font-family:Georgia,"Times New Roman",serif;color:#4a0e1a}
+  h2{margin-top:28px;padding-bottom:6px;border-bottom:2px solid #dcc7ab}
+  .diagram{background:#fff;border:1px solid #dcc7ab;border-radius:12px;padding:16px;margin-top:14px}
+  .flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .node{flex:1 1 150px;min-width:150px;background:#fff9f1;border:1px solid #e4d0b6;border-radius:10px;padding:12px}
+  .node strong{display:block;margin-bottom:4px;color:#4a0e1a}
+  .arrow{font-size:20px;color:#c9963a;font-weight:bold}
+  .stack{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .list{margin:0;padding-left:18px}
+  .small{color:#6f5a4c;font-size:14px}
+  @media print{body{background:#fff}.wrap{max-width:none;padding:12mm}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Parichayam Visual Flow Diagrams</h1>
+  <div class="small">Business-friendly flow maps for admin and owner training.</div>
+
+  <h2>1. End-to-End User Journey</h2>
+  <div class="diagram">
+    <div class="flow">
+      <div class="node"><strong>Index Page</strong>User lands on the website and sees brand trust and signup CTA.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Auth Page</strong>User signs in or starts registration.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Trial or Paid Start</strong>User starts free trial or goes to checkout.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Dashboard</strong>User completes profile and begins discovery.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Matches</strong>Backend ranks and returns live candidates.</div>
+    </div>
+  </div>
+
+  <h2>2. Matchmaking Engine</h2>
+  <div class="diagram">
+    <div class="stack">
+      <div class="node"><strong>Hard Filters</strong>
+        <ul class="list">
+          <li>Opposite gender only</li>
+          <li>No self profile</li>
+          <li>No blocked, hidden, suspended profiles</li>
+          <li>Same-gotra block if hard policy is enabled</li>
+        </ul>
+      </div>
+      <div class="node"><strong>Score Factors</strong>
+        <ul class="list">
+          <li>Age fit</li>
+          <li>Community fit</li>
+          <li>Location fit</li>
+          <li>Education fit</li>
+          <li>Income fit</li>
+          <li>Completeness, activity, trust, kundali</li>
+        </ul>
+      </div>
+    </div>
+    <div class="flow" style="margin-top:12px">
+      <div class="node"><strong>Limited Bonus Layer</strong>Paid and boosted profiles receive a capped visibility bonus.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Final Rank</strong>Highest total score appears first in Today’s Matches and search-driven discovery.</div>
+    </div>
+  </div>
+
+  <h2>3. Admin Controls and Business Impact</h2>
+  <div class="diagram">
+    <div class="stack">
+      <div class="node"><strong>Admin Settings</strong>
+        <ul class="list">
+          <li>Auth and OTP</li>
+          <li>Payment settings</li>
+          <li>Kundali settings</li>
+          <li>Dashboard Builder</li>
+          <li>Form Builder</li>
+        </ul>
+      </div>
+      <div class="node"><strong>Business Outcome</strong>
+        <ul class="list">
+          <li>Signup flow changes</li>
+          <li>Checkout behavior changes</li>
+          <li>Member dashboard visibility changes</li>
+          <li>Profile quality changes</li>
+          <li>Match quality changes</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h2>4. Daily Operations Loop</h2>
+  <div class="diagram">
+    <div class="flow">
+      <div class="node"><strong>Morning</strong>New registrations, verification queue, trial expiry, payments, agent requests.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Midday</strong>Match quality spot-check, incomplete profile review, support follow-up.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Evening</strong>Revenue summary, settings review, backlog review, business risk review.</div>
+    </div>
+  </div>
+
+  <h2>5. Verification Flow</h2>
+  <div class="diagram">
+    <div class="flow">
+      <div class="node"><strong>Member Upload</strong>Aadhaar or income proof is submitted.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Verification Queue</strong>Admin reviews document quality and consistency.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Approve or Reject</strong>Valid documents improve trust score; invalid ones return for correction.</div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>Trust Improvement</strong>Verified profiles rank better and look more serious to families.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

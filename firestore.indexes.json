@@ -1,0 +1,191 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "members",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "gender",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "community",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "members",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "gender",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "caste",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "members",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "gender",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "state",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "members",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "gender",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "country",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "agentActivity",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "agentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "agentLeads",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "agentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "agentLeads",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "agentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "mobile",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "agentLeads",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "agentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "memberUid",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "agentLeads",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "agentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "stage",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "commissionCredited",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "agentPayoutRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "agentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "agentPayoutRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "agentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "agentApplications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "mobile",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "agents",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

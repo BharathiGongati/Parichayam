@@ -1,0 +1,381 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/members/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+
+    function currentMemberRole() {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/members/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/members/$(request.auth.uid)).data.role
+        : '';
+    }
+
+    function isStaff() {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/members/$(request.auth.uid)) &&
+        currentMemberRole() in ['ADMIN', 'MATCHMAKER', 'EMPLOYEE'];
+    }
+
+    function isAnonymousPublicStateKey(key) {
+      return key in [
+        'parichayam_trial_settings',
+        'parichayam_kundali_settings',
+        'parichayam_kundali_pack_settings',
+        'parichayam_verification_settings',
+        'parichayam_dashboard_notice',
+        'parichayam_plan_prices',
+        'parichayam_site_settings',
+        'parichayam_public_profile_fields'
+      ];
+    }
+
+    function isSignedInStateKey(key) {
+      return key in [
+        'parichayam_payment_settings',
+        'parichayam_coupons',
+        'parichayam_addon_prices',
+        'parichayam_connect_packs',
+        'parichayam_connect_costs',
+        'parichayam_agent_directory',
+        'parichayam_gotras',
+        'parichayam_ads',
+        'parichayam_dash_vis',
+        'parichayam_communities'
+      ];
+    }
+
+    function memberProtectedFieldsForCreate() {
+      return [
+        'profileNumber',
+        'isPaid',
+        'tier',
+        'status',
+        'accountStatus',
+        'hidden',
+        'visibility',
+        'suspendedUntil',
+        'addons',
+        'plan',
+        'connects',
+        'connectsMax',
+        'planName',
+        'lastPaymentId',
+        'lastPaymentAt',
+        'lastPaymentAmount',
+        'paymentGateway',
+        'paymentCurrency',
+        'paymentStatus',
+        'paidAt',
+        'phoneVerified',
+        'phoneVerificationProvider',
+        'phoneVerifiedAt',
+        'trialEndsOn',
+        'aadhaarVerified',
+        'incomeVerified',
+        'verificationStatus',
+        'assignedToUid',
+        'assignedByUid',
+        'assignedRole',
+        'assignmentStatus',
+        'assignmentNotes',
+        'pipelineStatus',
+        'staffNotes',
+        'internalNotes',
+        'handledBy',
+        'employeeUid',
+        'matchmakerUid'
+      ];
+    }
+
+    function memberProtectedFieldsForUpdate() {
+      return [
+        'profileNumber',
+        'isPaid',
+        'tier',
+        'status',
+        'accountStatus',
+        'hidden',
+        'visibility',
+        'suspendedUntil',
+        'addons',
+        'plan',
+        'connects',
+        'connectsMax',
+        'planName',
+        'lastPaymentId',
+        'lastPaymentAt',
+        'lastPaymentAmount',
+        'paymentGateway',
+        'paymentCurrency',
+        'paymentStatus',
+        'paidAt',
+        'phoneVerified',
+        'phoneVerificationProvider',
+        'phoneVerifiedAt',
+        'trialEndsOn',
+        'aadhaarVerified',
+        'incomeVerified',
+        'verificationStatus',
+        'role',
+        // Staff/admin workflow assignment & control fields (normal members must not mutate).
+        'assignedMatchmakerUid',
+        'assignedMatchmakerName',
+        'assignedVerificationStaffUid',
+        'assignedVerificationStaffName',
+        'updatedByStaffUid',
+        'staffScope',
+        // Agent referral workflow fields (assignment metadata).
+        'agentRefId',
+        'referredByAgentRefId',
+        'referredByAgentName',
+        'referredByAgentCity',
+        'referredByAgentTier',
+        'referredByAgentMobile',
+        'agentReferralStatus',
+        'referredAt',
+        'assignedToUid',
+        'assignedByUid',
+        'assignedRole',
+        'assignmentStatus',
+        'assignmentNotes',
+        'pipelineStatus',
+        'staffNotes',
+        'internalNotes',
+        'handledBy',
+        'employeeUid',
+        'matchmakerUid'
+      ];
+    }
+
+    function memberStaffAllowedUpdateFields() {
+      return [
+        'status',
+        'accountStatus',
+        'hidden',
+        'visibility',
+        'suspendedUntil',
+        'suspensionReason',
+        'blockedAt',
+        'blockReason',
+        'reactivatedAt',
+        'approvedAt',
+        'rejectedAt',
+        'rejectionReason',
+        'reviewRequestedAt',
+        'reviewRequestNote',
+        'adminWatchlist',
+        'adminWatchlistReason',
+        'adminWatchlistAt',
+        'updatedAt',
+        'updatedByStaffUid'
+      ];
+    }
+
+    function memberCreateHasNoProtectedFields() {
+      return !request.resource.data.keys().hasAny(memberProtectedFieldsForCreate());
+    }
+
+    function memberUpdateTouchesNoProtectedFields() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(memberProtectedFieldsForUpdate());
+    }
+
+    function verificationStaffAllowedUpdateFields() {
+      return [
+        'status',
+        'memberVerificationStatus',
+        'approvedAt',
+        'rejectedAt',
+        'reviewNotes',
+        'reviewedAt',
+        'updatedAt',
+        'updatedByStaffUid'
+      ];
+    }
+
+    function verificationStaffClaimAllowedFields() {
+      return [
+        'assignedToUid',
+        'assignedToName',
+        'assignedRole',
+        'assignedAt',
+        'status',
+        'updatedAt',
+        'updatedByStaffUid'
+      ];
+    }
+
+    function memberAssignmentStaffAllowedUpdateFields() {
+      return [
+        'status',
+        'note',
+        'nextFollowUpAt',
+        'lastContactAt',
+        'outcome',
+        'updatedAt',
+        'updatedBy'
+      ];
+    }
+
+    match /members/{uid} {
+      allow create: if false;
+
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow update: if isAdmin() || (
+        isStaff() &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.id == resource.data.id &&
+        request.resource.data.role == resource.data.role &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(memberStaffAllowedUpdateFields()) &&
+        request.resource.data.updatedByStaffUid == request.auth.uid
+      ) || (
+        isOwner(uid) &&
+        request.resource.data.uid == resource.data.uid &&
+        request.resource.data.id == resource.data.id &&
+        request.resource.data.role == resource.data.role &&
+        memberUpdateTouchesNoProtectedFields()
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    match /memberPhoneIndex/{phone} {
+      allow get: if false;
+      allow list: if false;
+      allow create, update, delete: if false;
+    }
+
+    match /publicProfiles/{profileNumber} {
+      allow read, create, update, delete: if false;
+    }
+
+    match /systemCounters/{counterId} {
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    match /appState/{key} {
+      allow get: if isAdmin() ||
+        isAnonymousPublicStateKey(key) ||
+        (signedIn() && isSignedInStateKey(key));
+      allow list: if false;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /agents/{agentId} {
+      allow read: if isOwner(agentId) || isAdmin();
+      allow create, update, delete: if false;
+    }
+
+    match /agentLeads/{leadId} {
+      allow read: if isAdmin() ||
+        (signedIn() && resource.data.agentId == request.auth.uid);
+      allow create, update, delete: if false;
+    }
+
+    match /agentActivity/{activityId} {
+      allow read: if isAdmin() ||
+        (signedIn() && resource.data.agentId == request.auth.uid);
+      allow create, update, delete: if false;
+    }
+
+    match /agentApplications/{applicationId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /agentPayoutRequests/{requestId} {
+      allow read: if isAdmin() ||
+        (signedIn() && resource.data.agentId == request.auth.uid);
+      allow create, update, delete: if false;
+    }
+
+    match /verificationRequests/{requestId} {
+      allow create: if signedIn() &&
+        request.resource.data.memberUid == request.auth.uid &&
+        request.resource.data.type in ['aadhaar', 'income'] &&
+        request.resource.data.amount > 0 &&
+        request.resource.data.paymentStatus == 'pending' &&
+        request.resource.data.status == 'awaiting_payment' &&
+        request.resource.data.assignedToUid == '';
+
+      allow read: if isAdmin() ||
+        (signedIn() && resource.data.memberUid == request.auth.uid) ||
+        (isStaff() && (
+          resource.data.assignedToUid == request.auth.uid ||
+          resource.data.assignedToUid == ''
+        ));
+
+      allow update: if isAdmin() || (
+        signedIn() &&
+        resource.data.assignedToUid == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(verificationStaffAllowedUpdateFields()) &&
+        (
+          request.resource.data.status != 'approved' ||
+          resource.data.paymentStatus == 'paid'
+        )
+      ) || (
+        isStaff() &&
+        resource.data.assignedToUid == '' &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(verificationStaffClaimAllowedFields()) &&
+        request.resource.data.assignedToUid == request.auth.uid &&
+        request.resource.data.assignedRole == resource.data.assignedRole &&
+        request.resource.data.assignedRole == currentMemberRole() &&
+        request.resource.data.updatedByStaffUid == request.auth.uid &&
+        request.resource.data.status == 'in_review'
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    match /memberAssignments/{assignmentId} {
+      allow create, delete: if isAdmin();
+      allow read: if isAdmin() || (signedIn() && resource.data.assignedToUid == request.auth.uid);
+      allow update: if isAdmin() || (
+        signedIn() &&
+        resource.data.assignedToUid == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(memberAssignmentStaffAllowedUpdateFields()) &&
+        request.resource.data.memberUid == resource.data.memberUid &&
+        request.resource.data.assignedToUid == resource.data.assignedToUid &&
+        request.resource.data.assignedToName == resource.data.assignedToName &&
+        request.resource.data.assignedRole == resource.data.assignedRole &&
+        request.resource.data.memberName == resource.data.memberName &&
+        request.resource.data.memberPhone == resource.data.memberPhone &&
+        request.resource.data.memberEmail == resource.data.memberEmail &&
+        request.resource.data.memberCity == resource.data.memberCity &&
+        request.resource.data.memberTier == resource.data.memberTier &&
+        request.resource.data.createdAt == resource.data.createdAt &&
+        request.resource.data.createdBy == resource.data.createdBy &&
+        request.resource.data.updatedBy == request.auth.uid
+      );
+    }
+
+    match /staffActivityLogs/{logId} {
+      allow create: if isStaff() &&
+        request.resource.data.actorUid == request.auth.uid;
+      allow read: if isAdmin() ||
+        (signedIn() && resource.data.actorUid == request.auth.uid) ||
+        (signedIn() && resource.data.memberUid == request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
